@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقویم ۱۴۰۵</title>
+    
+    <!-- ====== PWA META TAGS ====== -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+    <link rel="manifest" href="data:application/json;base64,${MANIFEST_BASE64}">
+    
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --today: #fef3c7;
+            --today-border: #f59e0b;
+            --friday: #ef4444;
+            --thursday: #3b82f6;
+            --success: #10b981;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body.dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --primary-light: #1e3a5f;
+            --today: #3e3500;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow: 0 4px 6px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px;
+            max-width: 850px;
+            margin: auto;
+            transition: background var(--transition), color var(--transition);
+        }
+        
+        .header {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card);
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+        .header h2 {
+            font-size: 1.2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        select, button {
+            padding: 10px 16px;
+            border-radius: 25px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        select:hover, button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        select:active, button:active { transform: scale(0.96); }
+        .btn-today {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-color: #f59e0b;
+            font-weight: 700;
+        }
+        .btn-theme {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: #3730a3;
+            border-color: #818cf8;
+        }
+        .btn-install {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border-color: #10b981;
+            font-weight: 700;
+            display: none;
+        }
+        .btn-install.show { display: inline-block; }
+        
+        .month-title {
+            text-align: center;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            font-size: 1.3em;
+            font-weight: 800;
+            box-shadow: var(--shadow);
+            letter-spacing: 1px;
+        }
+        
+        .nav-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .nav-btns button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            font-weight: 600;
+            min-width: 100px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            background: var(--card);
+            padding: 14px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .grid .day-name {
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            padding: 8px 2px;
+            letter-spacing: 0.5px;
+        }
+        .grid .day-cell {
+            padding: 12px 4px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all var(--transition);
+            user-select: none;
+            position: relative;
+        }
+        .grid .day-cell:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .grid .day-cell.today {
+            background: var(--today);
+            border-color: var(--today-border);
+            font-weight: 800;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+        }
+        .grid .day-cell.selected {
+            background: #dbeafe;
+            border-color: var(--primary-dark);
+            font-weight: 800;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        .grid .day-cell.friday { color: var(--friday); font-weight: 700; }
+        .grid .day-cell.thursday { color: var(--thursday); font-weight: 700; }
+        .grid .day-cell.empty { cursor: default; }
+        .grid .day-cell.has-note::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px rgba(16,185,129,0.5);
+        }
+        
+        .day-detail {
+            background: var(--card);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .day-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .day-detail-header h3 {
+            font-size: 1.1em;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+        .close-btn {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all var(--transition);
+        }
+        .close-btn:hover { background: #fecaca; }
+        
+        .slots-scroll {
+            max-height: 60vh;
+            overflow-y: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .slots-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82em;
+        }
+        .slots-table th {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            font-weight: 700;
+            padding: 12px 10px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+        .slots-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            transition: background var(--transition);
+        }
+        .slots-table tr:hover td { background: var(--primary-light); }
+        .slots-table .time-col {
+            width: 110px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            color: var(--primary-dark);
+            font-size: 0.85em;
+            border-radius: 6px;
+            cursor: default;
+        }
+        .slots-table .time-col.has-note {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .slots-table .note-col { width: auto; }
+        .slots-table .note-col .note-title {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-size: 0.9em;
+            font-weight: 600;
+            background: var(--card);
+            color: var(--text);
+            transition: all var(--transition);
+            margin-bottom: 4px;
+        }
+        .slots-table .note-col .note-title:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+            background: var(--primary-light);
+        }
+        .slots-table .note-col .note-desc {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-size: 0.8em;
+            background: var(--card);
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            resize: vertical;
+            min-height: 30px;
+        }
+        .slots-table .note-col .note-desc:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+            background: var(--primary-light);
+        }
+        
+        .slots-scroll::-webkit-scrollbar { width: 6px; }
+        .slots-scroll::-webkit-scrollbar-track { background: transparent; }
+        .slots-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .slots-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .header { padding: 10px 12px; gap: 6px; }
+            .header h2 { font-size: 1em; }
+            select, button { padding: 7px 12px; font-size: 0.75em; }
+            .grid { padding: 8px; gap: 2px; }
+            .grid .day-cell { padding: 8px 1px; font-size: 0.75em; }
+            .day-detail { padding: 12px; }
+            .slots-table { font-size: 0.7em; }
+            .slots-table th, .slots-table td { padding: 6px 4px; }
+            .slots-table .time-col { width: 70px; font-size: 0.7em; }
+            .slots-table .note-col .note-title { font-size: 0.75em; padding: 5px 6px; }
+            .slots-table .note-col .note-desc { font-size: 0.7em; padding: 5px 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2>📅 تقویم ۱۴۰۵</h2>
+    <select id="monthSelect"></select>
+    <button class="btn-today" onclick="goToday()">📍 امروز</button>
+    <button class="btn-theme" onclick="toggleTheme()">🌓</button>
+    <button class="btn-install" id="btnInstall" onclick="installApp()">📲 نصب</button>
+</div>
+
+<div id="calendar"></div>
+
+<script>
+// ====== PWA INSTALL ======
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('btnInstall').classList.add('show');
+});
+
+function installApp() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((result) => {
+            if (result.outcome === 'accepted') {
+                document.getElementById('btnInstall').classList.remove('show');
+            }
+            deferredPrompt = null;
+        });
+    }
+}
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register("data:application/javascript," + encodeURIComponent(
+            "self.addEventListener('install',e=>self.skipWaiting());" +
+            "self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));" +
+            "self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('آفلاین هستید'))));"
+        ));
+    });
+}
+
+// ====== CONFIG ======
+const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
+const DAY_FULL = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'];
+const DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
+const YEAR_START = new Date(2026, 2, 21);
+
+function g2p(gDate) {
+    const gy = gDate.getFullYear(), gm = gDate.getMonth() + 1, gd = gDate.getDate();
+    const gdim = [31,28,31,30,31,30,31,31,30,31,30,31];
+    if ((gy%4===0 && gy%100!==0) || gy%400===0) gdim[1]=29;
+    
+    let gdn = 365*(gy-1600) + Math.floor((gy-1600+3)/4) - Math.floor((gy-1600+99)/100) + Math.floor((gy-1600+399)/400);
+    for (let i=0; i<gm-1; i++) gdn += gdim[i];
+    gdn += gd - 1;
+    
+    let pdn = gdn - 79;
+    let pnp = Math.floor(pdn/12053); pdn %= 12053;
+    let py = 979 + 33*pnp + 4*Math.floor(pdn/1461); pdn %= 1461;
+    if (pdn >= 366) { py += Math.floor((pdn-1)/365); pdn = (pdn-1)%365; }
+    
+    const pdim = [31,31,31,31,31,31,30,30,30,30,30,29];
+    let pm = 0;
+    while (pdn >= pdim[pm] && pm < 11) { pdn -= pdim[pm]; pm++; }
+    
+    return { y: py, m: pm+1, d: pdn+1 };
+}
+
+function pdow(gDate) { return (gDate.getDay() + 1) % 7; }
+function pnum(n) { return String(n).split('').map(c => '۰۱۲۳۴۵۶۷۸۹'[c]).join(''); }
+function getDateKey(y, m, d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function getSlotKey(dateKey, slotIndex) { return `${dateKey}-s${slotIndex}`; }
+
+let currentMonthIndex = 0;
+const today = g2p(new Date());
+let NOTES = {};
+
+function loadNotes() {
+    try { NOTES = JSON.parse(localStorage.getItem('taghvim-v2') || '{}'); } catch(e) { NOTES = {}; }
+}
+
+function saveNotes() {
+    localStorage.setItem('taghvim-v2', JSON.stringify(NOTES));
+    updateNoteDots();
+}
+
+function hasNotesForDate(dateKey) {
+    for (let i = 0; i < 96; i++) {
+        const n = NOTES[getSlotKey(dateKey, i)];
+        if (n && (n.title || n.desc)) return true;
+    }
+    return false;
+}
+
+function updateNoteDots() {
+    document.querySelectorAll('.day-cell[data-key]').forEach(cell => {
+        if (hasNotesForDate(cell.dataset.key)) {
+            cell.classList.add('has-note');
+        } else {
+            cell.classList.remove('has-note');
+        }
+    });
+}
+
+function getFirstDayOfMonth(m) {
+    const d = new Date(YEAR_START);
+    for (let i = 0; i < m; i++) d.setDate(d.getDate() + DAYS_IN_MONTH[i]);
+    return d;
+}
+
+function renderMonth(m) {
+    currentMonthIndex = m;
+    const cal = document.getElementById('calendar');
+    const firstDay = getFirstDayOfMonth(m);
+    const startDow = pdow(firstDay);
+    const dim = DAYS_IN_MONTH[m];
+    
+    let html = `<div class="month-title">${MONTHS[m]} ۱۴۰۵</div>`;
+    html += `<div class="nav-btns">
+        <button onclick="renderMonth(${m-1 < 0 ? 11 : m-1})">◀ ${MONTHS[m-1 < 0 ? 11 : m-1]}</button>
+        <button class="btn-today" onclick="goToday()">📍 امروز</button>
+        <button onclick="renderMonth(${m+1 > 11 ? 0 : m+1})">${MONTHS[m+1 > 11 ? 0 : m+1]} ▶</button>
+    </div>`;
+    
+    html += `<div class="grid">`;
+    DAY_SHORT.forEach(d => html += `<div class="day-name">${d}</div>`);
+    for (let i = 0; i < startDow; i++) html += `<div class="day-cell empty"></div>`;
+    
+    const cur = new Date(firstDay);
+    for (let d = 1; d <= dim; d++) {
+        const pd = g2p(cur);
+        const dow = pdow(cur);
+        const dateKey = getDateKey(pd.y, pd.m, pd.d);
+        
+        let cls = 'day-cell';
+        if (dow === 6) cls += ' friday';
+        if (dow === 5) cls += ' thursday';
+        if (pd.y === today.y && pd.m === today.m && pd.d === today.d) cls += ' today';
+        if (hasNotesForDate(dateKey)) cls += ' has-note';
+        
+        html += `<div class="${cls}" data-m="${m}" data-d="${d}" data-key="${dateKey}">${pnum(d)}</div>`;
+        cur.setDate(cur.getDate() + 1);
+    }
+    html += `</div>`;
+    html += `<div id="dayDetail" class="day-detail" style="display:none;"></div>`;
+    
+    cal.innerHTML = html;
+    document.getElementById('monthSelect').value = m;
+    
+    cal.querySelectorAll('.day-cell:not(.empty)').forEach(cell => {
+        cell.addEventListener('click', function() {
+            cal.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            showDayDetail(parseInt(this.dataset.m), parseInt(this.dataset.d));
+        });
+    });
+}
+
+function showDayDetail(m, day) {
+    const firstDay = getFirstDayOfMonth(m);
+    const targetDate = new Date(firstDay.getTime() + (day - 1) * 86400000);
+    const pd = g2p(targetDate);
+    const dow = pdow(targetDate);
+    const dateKey = getDateKey(pd.y, pd.m, pd.d);
+    
+    const detail = document.getElementById('dayDetail');
+    
+    let html = `
+        <div class="day-detail-header">
+            <h3>📅 ${pnum(pd.y)}/${String(pd.m).padStart(2,'0')}/${String(pd.d).padStart(2,'0')} - ${DAY_FULL[dow]}</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <span style="font-size:0.75em;color:var(--text-secondary);">💡 تایپ کنید، خودکار ذخیره می‌شود</span>
+                <button class="close-btn" onclick="document.getElementById('dayDetail').style.display='none'">✕</button>
+            </div>
+        </div>
+        <div class="slots-scroll">
+            <table class="slots-table">
+                <thead>
+                    <tr>
+                        <th>⏰ بازه</th>
+                        <th>📌 عنوان فعالیت</th>
+                        <th>📝 توضیحات</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+    
+    let slotIndex = 0;
+    for (let h = 0; h < 24; h++) {
+        for (let mm = 0; mm < 60; mm += 15) {
+            const start = `${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+            let eh = h, em = mm + 15;
+            if (em === 60) { eh++; em = 0; }
+            if (eh === 24) eh = 0;
+            const end = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
+            
+            const sk = getSlotKey(dateKey, slotIndex);
+            const note = NOTES[sk] || { title: '', desc: '' };
+            const hasContent = note.title || note.desc;
+            
+            html += `
+                <tr>
+                    <td class="time-col${hasContent ? ' has-note' : ''}">${start}<br>${end}</td>
+                    <td class="note-col">
+                        <input type="text" 
+                               class="note-title"
+                               data-slot="${sk}" 
+                               data-field="title"
+                               value="${(note.title || '').replace(/"/g, '&quot;')}" 
+                               placeholder="عنوان فعالیت...">
+                    </td>
+                    <td class="note-col">
+                        <input type="text" 
+                               class="note-desc"
+                               data-slot="${sk}" 
+                               data-field="desc"
+                               value="${(note.desc || '').replace(/"/g, '&quot;')}" 
+                               placeholder="توضیحات...">
+                    </td>
+                </tr>`;
+            slotIndex++;
+        }
+    }
+    
+    html += `</tbody></table></div>`;
+    
+    detail.innerHTML = html;
+    detail.style.display = 'block';
+    detail.scrollIntoView({ behavior: 'smooth' });
+    
+    detail.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            const slotKey = this.dataset.slot;
+            const field = this.dataset.field;
+            
+            if (!NOTES[slotKey]) NOTES[slotKey] = { title: '', desc: '' };
+            NOTES[slotKey][field] = this.value;
+            
+            const tr = this.closest('tr');
+            if (tr) {
+                const tc = tr.querySelector('.time-col');
+                if (tc) {
+                    if (NOTES[slotKey].title || NOTES[slotKey].desc) {
+                        tc.classList.add('has-note');
+                    } else {
+                        tc.classList.remove('has-note');
+                    }
+                }
+            }
+            
+            clearTimeout(this._saveTimeout);
+            this._saveTimeout = setTimeout(() => saveNotes(), 300);
+        });
+    });
+}
+
+function goToday() {
+    currentMonthIndex = today.m - 1;
+    renderMonth(currentMonthIndex);
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('taghvim-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+// ====== INIT ======
+loadNotes();
+
+const sel = document.getElementById('monthSelect');
+MONTHS.forEach((name, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = name;
+    sel.appendChild(opt);
+});
+sel.addEventListener('change', function() {
+    renderMonth(parseInt(this.value));
+});
+
+if (localStorage.getItem('taghvim-theme') === 'dark') {
+    document.body.classList.add('dark');
+}
+
+goToday();
+</script>
+</body>
+</html>
