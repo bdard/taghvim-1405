@@ -110,6 +110,21 @@
     const today=g2p(new Date());
     let NOTES={};
     
+    // Realtime - گوش دادن به تغییرات
+    if(supabase){
+        supabase
+            .channel('notes-rt')
+            .on('postgres_changes',{event:'*',schema:'public',table:'notes'},payload=>{
+                if(payload.new){
+                    const r=payload.new;
+                    NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
+                    saveLocal();
+                    updateDots();
+                }
+            })
+            .subscribe();
+    }
+    
     async function loadCloud(){
         if(!supabase)return;
         try{
@@ -120,17 +135,14 @@
             document.getElementById('syncStatus').classList.add('synced');
         }catch(e){
             document.getElementById('syncStatus').textContent='📱 آفلاین';
-            document.getElementById('syncStatus').classList.remove('synced');
         }
     }
     
     async function saveCloud(sk_,t,d){
         if(!supabase)return;
         try{
-            document.getElementById('syncStatus').textContent='🔄 ذخیره...';
             await supabase.from('notes').delete().eq('slot_key',sk_);
-            const{error}=await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
-            if(error)throw error;
+            await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
             document.getElementById('syncStatus').textContent='✅ ذخیره شد';
             document.getElementById('syncStatus').classList.add('synced');
         }catch(e){
@@ -138,8 +150,8 @@
         }
     }
     
-    function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv5')||'{}');}catch(e){NOTES={};}}
-    function saveLocal(){localStorage.setItem('tv5',JSON.stringify(NOTES));updateDots();}
+    function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv7')||'{}');}catch(e){NOTES={};}}
+    function saveLocal(){localStorage.setItem('tv7',JSON.stringify(NOTES));updateDots();}
     function hasNotes(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.description))return true;}return false;}
     function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hasNotes(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
     
@@ -188,7 +200,7 @@
         const dow=pdow(td);
         const dk_=dk(pd.y,pd.m,pd.d);
         const detail=document.getElementById('dayDetail');
-        let h=`<div class="day-detail-header"><h3>📅 ${pnum(pd.y)}/${String(pd.m).padStart(2,'0')}/${String(pd.d).padStart(2,'0')} - ${DAY_FULL[dow]}</h3><div style="display:flex;gap:8px;align-items:center;"><span style="font-size:.75em;color:var(--text-secondary);">💡 تایپ کنید، خودکار ذخیره می‌شود</span><button class="close-btn" onclick="document.getElementById('dayDetail').style.display='none'">✕</button></div></div>`;
+        let h=`<div class="day-detail-header"><h3>📅 ${pnum(pd.y)}/${String(pd.m).padStart(2,'0')}/${String(pd.d).padStart(2,'0')} - ${DAY_FULL[dow]}</h3><div style="display:flex;gap:8px;align-items:center;"><span style="font-size:.75em;color:var(--text-secondary);">💡 تایپ کنید، خودکار ذخیره و سینک می‌شود</span><button class="close-btn" onclick="document.getElementById('dayDetail').style.display='none'">✕</button></div></div>`;
         h+=`<div class="slots-scroll"><table class="slots-table"><thead><tr><th>⏰ بازه</th><th>📌 عنوان</th><th>📝 توضیحات</th></tr></thead><tbody>`;
         let si=0;
         for(let hh=0;hh<24;hh++){
