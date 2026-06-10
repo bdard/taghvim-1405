@@ -373,15 +373,11 @@
 const SUPABASE_URL = 'https://moaofxlfantlijlkmcoi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R';
 
-let supabase;
-try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+if (typeof supabase === 'undefined') {
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.log('Supabase connected!');
     document.getElementById('syncStatus').textContent = '✅ آنلاین';
     document.getElementById('syncStatus').classList.add('synced');
-} catch(e) {
-    console.error('Supabase error:', e);
-    document.getElementById('syncStatus').textContent = '⚠️ خطا: ' + e.message;
 }
 
 // ====== PWA ======
