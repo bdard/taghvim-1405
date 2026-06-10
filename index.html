@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقویم ۱۴۰۵</title>
     
-    <!-- ====== PWA META TAGS ====== -->
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
-    <link rel="manifest" href="data:application/json;base64,${MANIFEST_BASE64}">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <style>
@@ -29,6 +31,7 @@
             --friday: #ef4444;
             --thursday: #3b82f6;
             --success: #10b981;
+            --syncing: #f59e0b;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow: 0 4px 6px rgba(0,0,0,0.07);
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
@@ -87,6 +90,16 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        .sync-status {
+            font-size: 0.7em;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .sync-status.synced { background: #d1fae5; color: #065f46; }
+        .sync-status.syncing { background: #fef3c7; color: #92400e; }
         select, button {
             padding: 10px 16px;
             border-radius: 25px;
@@ -113,14 +126,6 @@
             color: #3730a3;
             border-color: #818cf8;
         }
-        .btn-install {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #065f46;
-            border-color: #10b981;
-            font-weight: 700;
-            display: none;
-        }
-        .btn-install.show { display: inline-block; }
         
         .month-title {
             text-align: center;
@@ -236,11 +241,7 @@
             padding-bottom: 12px;
             border-bottom: 2px solid var(--border);
         }
-        .day-detail-header h3 {
-            font-size: 1.1em;
-            font-weight: 800;
-            color: var(--primary-dark);
-        }
+        .day-detail-header h3 { font-size: 1.1em; font-weight: 800; color: var(--primary-dark); }
         .close-btn {
             background: #fee2e2;
             color: #991b1b;
@@ -362,36 +363,35 @@
 
 <div class="header">
     <h2>📅 تقویم ۱۴۰۵</h2>
+    <span class="sync-status" id="syncStatus">🔄 در حال اتصال...</span>
     <select id="monthSelect"></select>
     <button class="btn-today" onclick="goToday()">📍 امروز</button>
     <button class="btn-theme" onclick="toggleTheme()">🌓</button>
-    <button class="btn-install" id="btnInstall" onclick="installApp()">📲 نصب</button>
 </div>
 
 <div id="calendar"></div>
 
 <script>
-// ====== PWA INSTALL ======
+// ====== SUPABASE CONFIG ======
+const SUPABASE_URL = 'https://moaofxlfantlijlkmcoi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R';
+
+let supabase;
+try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    document.getElementById('syncStatus').textContent = '✅ آنلاین';
+    document.getElementById('syncStatus').classList.add('synced');
+} catch(e) {
+    document.getElementById('syncStatus').textContent = '⚠️ خطا در اتصال';
+}
+
+// ====== PWA ======
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    document.getElementById('btnInstall').classList.add('show');
 });
 
-function installApp() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((result) => {
-            if (result.outcome === 'accepted') {
-                document.getElementById('btnInstall').classList.remove('show');
-            }
-            deferredPrompt = null;
-        });
-    }
-}
-
-// Register Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register("data:application/javascript," + encodeURIComponent(
@@ -439,13 +439,72 @@ let currentMonthIndex = 0;
 const today = g2p(new Date());
 let NOTES = {};
 
-function loadNotes() {
-    try { NOTES = JSON.parse(localStorage.getItem('taghvim-v2') || '{}'); } catch(e) { NOTES = {}; }
+// ====== SYNC WITH SUPABASE ======
+async function loadNotesFromCloud() {
+    if (!supabase) return;
+    try {
+        const { data, error } = await supabase
+            .from('notes')
+            .select('*')
+            .eq('year', 1405);
+        
+        if (error) throw error;
+        
+        if (data) {
+            data.forEach(row => {
+                NOTES[row.slot_key] = {
+                    title: row.title || '',
+                    desc: row.desc || ''
+                };
+            });
+            saveNotesLocally();
+            updateAllNoteDots();
+        }
+        document.getElementById('syncStatus').textContent = '✅ همگام‌سازی شد';
+        document.getElementById('syncStatus').classList.add('synced');
+    } catch(e) {
+        console.log('Cloud sync error:', e);
+        document.getElementById('syncStatus').textContent = '📱 آفلاین';
+        document.getElementById('syncStatus').classList.remove('synced');
+    }
 }
 
-function saveNotes() {
-    localStorage.setItem('taghvim-v2', JSON.stringify(NOTES));
-    updateNoteDots();
+async function saveNoteToCloud(slotKey, title, desc) {
+    if (!supabase) return;
+    try {
+        document.getElementById('syncStatus').textContent = '🔄 در حال ذخیره...';
+        document.getElementById('syncStatus').classList.add('syncing');
+        
+        const { error } = await supabase
+            .from('notes')
+            .upsert({
+                slot_key: slotKey,
+                year: 1405,
+                title: title,
+                desc: desc,
+                updated_at: new Date().toISOString()
+            });
+        
+        if (error) throw error;
+        
+        document.getElementById('syncStatus').textContent = '✅ ذخیره شد';
+        document.getElementById('syncStatus').classList.add('synced');
+        document.getElementById('syncStatus').classList.remove('syncing');
+    } catch(e) {
+        console.log('Save to cloud error:', e);
+        document.getElementById('syncStatus').textContent = '💾 ذخیره محلی';
+        document.getElementById('syncStatus').classList.remove('syncing');
+    }
+}
+
+// ====== LOCAL STORAGE ======
+function loadNotesLocally() {
+    try { NOTES = JSON.parse(localStorage.getItem('taghvim-v3') || '{}'); } catch(e) { NOTES = {}; }
+}
+
+function saveNotesLocally() {
+    localStorage.setItem('taghvim-v3', JSON.stringify(NOTES));
+    updateAllNoteDots();
 }
 
 function hasNotesForDate(dateKey) {
@@ -456,7 +515,7 @@ function hasNotesForDate(dateKey) {
     return false;
 }
 
-function updateNoteDots() {
+function updateAllNoteDots() {
     document.querySelectorAll('.day-cell[data-key]').forEach(cell => {
         if (hasNotesForDate(cell.dataset.key)) {
             cell.classList.add('has-note');
@@ -533,7 +592,7 @@ function showDayDetail(m, day) {
         <div class="day-detail-header">
             <h3>📅 ${pnum(pd.y)}/${String(pd.m).padStart(2,'0')}/${String(pd.d).padStart(2,'0')} - ${DAY_FULL[dow]}</h3>
             <div style="display:flex;gap:8px;align-items:center;">
-                <span style="font-size:0.75em;color:var(--text-secondary);">💡 تایپ کنید، خودکار ذخیره می‌شود</span>
+                <span style="font-size:0.75em;color:var(--text-secondary);">💡 تایپ کنید، خودکار ذخیره و سینک می‌شود</span>
                 <button class="close-btn" onclick="document.getElementById('dayDetail').style.display='none'">✕</button>
             </div>
         </div>
@@ -612,7 +671,10 @@ function showDayDetail(m, day) {
             }
             
             clearTimeout(this._saveTimeout);
-            this._saveTimeout = setTimeout(() => saveNotes(), 300);
+            this._saveTimeout = setTimeout(() => {
+                saveNotesLocally();
+                saveNoteToCloud(slotKey, NOTES[slotKey].title, NOTES[slotKey].desc);
+            }, 500);
         });
     });
 }
@@ -628,7 +690,7 @@ function toggleTheme() {
 }
 
 // ====== INIT ======
-loadNotes();
+loadNotesLocally();
 
 const sel = document.getElementById('monthSelect');
 MONTHS.forEach((name, i) => {
@@ -644,6 +706,13 @@ sel.addEventListener('change', function() {
 if (localStorage.getItem('taghvim-theme') === 'dark') {
     document.body.classList.add('dark');
 }
+
+// Load from cloud
+loadNotesFromCloud().then(() => {
+    renderMonth(currentMonthIndex);
+}).catch(() => {
+    renderMonth(currentMonthIndex);
+});
 
 goToday();
 </script>
