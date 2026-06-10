@@ -39,10 +39,8 @@
         .slots-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
         .slots-table .time-col{width:110px;font-weight:700;text-align:center;color:#1d4ed8;font-size:.85em}
         .slots-table .time-col.has-note{background:#d1fae5;color:#065f46}
-        .slots-table .note-title{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:.9em;font-weight:600;background:var(--card);color:var(--text);margin-bottom:4px}
-        .slots-table .note-title:focus{outline:none;border-color:#3b82f6}
-        .slots-table .note-description{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:.8em;background:var(--card);color:#6b7280}
-        .slots-table .note-description:focus{outline:none;border-color:#3b82f6}
+        .slots-table input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:.9em;background:var(--card);color:var(--text)}
+        .slots-table input:focus{outline:none;border-color:#3b82f6}
         @media(max-width:600px){body{padding:8px}.grid .day-cell{padding:8px 1px;font-size:.75em}.slots-table{font-size:.7em}}
     </style>
 </head>
@@ -50,7 +48,7 @@
 
 <div class="header">
     <h2>📅 تقویم ۱۴۰۵</h2>
-    <span class="sync-status" id="syncStatus">🔄 در حال اتصال...</span>
+    <span class="sync-status" id="syncStatus">🔄</span>
     <select id="monthSelect"></select>
     <button class="btn-today" onclick="goToday()">📍 امروز</button>
     <button class="btn-theme" onclick="toggleTheme()">🌓</button>
@@ -59,126 +57,97 @@
 <div id="calendar"></div>
 
 <script>
-// ====== CONFIG ======
-const SUPABASE_URL = 'https://moaofxlfantlijlkmcoi.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R';
-const SYNC_INTERVAL = 2000; // هر چند میلی‌ثانیه چک کنه
+const SB = window.supabase.createClient('https://moaofxlfantlijlkmcoi.supabase.co','sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R');
+document.getElementById('syncStatus').textContent='✅ آنلاین';
+document.getElementById('syncStatus').classList.add('synced');
 
-let supabase;
-try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    document.getElementById('syncStatus').textContent = '✅ آنلاین';
-    document.getElementById('syncStatus').classList.add('synced');
-} catch(e) {
-    document.getElementById('syncStatus').textContent = '⚠️ خطا';
-}
+const M=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const DS=['ش','ی','د','س','چ','پ','ج'];
+const DF=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'];
+const DIM=[31,31,31,31,31,31,30,30,30,30,30,29];
+const YS=new Date(2026,2,21);
 
-const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
-const DAY_FULL = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'];
-const DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
-const YEAR_START = new Date(2026, 2, 21);
-
-function g2p(d) {
+function g2p(d){
     const gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate();
     const gdi=[31,28,31,30,31,30,31,31,30,31,30,31];
     if((gy%4===0&&gy%100!==0)||gy%400===0)gdi[1]=29;
     let dn=365*(gy-1600)+Math.floor((gy-1600+3)/4)-Math.floor((gy-1600+99)/100)+Math.floor((gy-1600+399)/400);
     for(let i=0;i<gm-1;i++)dn+=gdi[i];dn+=gd-1;
-    let pn=dn-79,p=Math.floor(pn/12053);pn%=12053;
-    let py=979+33*p+4*Math.floor(pn/1461);pn%=1461;
+    let pn=dn-79,pp=Math.floor(pn/12053);pn%=12053;
+    let py=979+33*pp+4*Math.floor(pn/1461);pn%=1461;
     if(pn>=366){py+=Math.floor((pn-1)/365);pn=(pn-1)%365;}
     const pdi=[31,31,31,31,31,31,30,30,30,30,30,29];
     let pm=0;while(pn>=pdi[pm]&&pm<11){pn-=pdi[pm];pm++;}
     return{y:py,m:pm+1,d:pn+1};
 }
-
 function pdow(d){return(d.getDay()+1)%7;}
-function pnum(n){return String(n).split('').map(c=>'۰۱۲۳۴۵۶۷۸۹'[c]).join('');}
+function pn(n){return String(n).split('').map(c=>'۰۱۲۳۴۵۶۷۸۹'[c]).join('');}
 function dk(y,m,d){return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
-function sk(dk,i){return dk+'-s'+i;}
+function sk(d,i){return d+'-s'+i;}
 
 let cm=0;
 const today=g2p(new Date());
 let NOTES={};
 
-// ====== CLOUD ======
 async function loadCloud(){
-    if(!supabase)return;
     try{
-        const{data}=await supabase.from('notes').select('*').eq('year',1405);
-        if(data){data.forEach(r=>{NOTES[r.slot_key]={title:r.title||'',description:r.description||''};});}
-        saveLocal();
-        updateDots();
-        document.getElementById('syncStatus').textContent='✅ همگام شد';
+        const{data}=await SB.from('notes').select('*').eq('year',1405);
+        if(data){data.forEach(r=>{NOTES[r.slot_key]={title:r.title||'',desc:r.description||''};});}
+        save();updateDots();
+        document.getElementById('syncStatus').textContent='✅ همگام';
         document.getElementById('syncStatus').classList.add('synced');
-    }catch(e){
-        document.getElementById('syncStatus').textContent='📱 آفلاین';
-    }
+    }catch(e){}
 }
 
-async function saveCloud(sk_,t,d){
-    if(!supabase)return;
+async function saveCloud(k,t,d){
     try{
-        await supabase.from('notes').delete().eq('slot_key',sk_);
-        await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
+        await SB.from('notes').delete().eq('slot_key',k);
+        await SB.from('notes').insert({slot_key:k,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
         document.getElementById('syncStatus').textContent='✅ ذخیره شد';
         document.getElementById('syncStatus').classList.add('synced');
-    }catch(e){
-        document.getElementById('syncStatus').textContent='💾 ذخیره محلی';
-    }
+    }catch(e){}
 }
 
-// ====== چک خودکار ======
 setInterval(async function(){
-    if(!supabase)return;
     try{
-        const{data}=await supabase.from('notes').select('*').eq('year',1405);
+        const{data}=await SB.from('notes').select('*').eq('year',1405);
         if(data){
-            let changed=false;
+            let c=false;
             data.forEach(r=>{
-                const old=NOTES[r.slot_key];
-                if(!old||old.title!==(r.title||'')||old.description!==(r.description||'')){
-                    NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
-                    changed=true;
+                const o=NOTES[r.slot_key];
+                if(!o||o.title!==(r.title||'')||o.desc!==(r.description||'')){
+                    NOTES[r.slot_key]={title:r.title||'',desc:r.description||''};c=true;
                 }
             });
-            if(changed){saveLocal();updateDots();}
+            if(c){save();updateDots();}
         }
     }catch(e){}
-},SYNC_INTERVAL);
+},3000);
 
-// ====== LOCAL ======
-function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv9')||'{}');}catch(e){NOTES={};}}
-function saveLocal(){localStorage.setItem('tv9',JSON.stringify(NOTES));updateDots();}
-function hasNotes(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.description))return true;}return false;}
-function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hasNotes(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
+function load(){try{NOTES=JSON.parse(localStorage.getItem('tv10')||'{}');}catch(e){NOTES={};}}
+function save(){localStorage.setItem('tv10',JSON.stringify(NOTES));updateDots();}
+function hn(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.desc))return true;}return false;}
+function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hn(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
 
-// ====== RENDER ======
-function gfdm(m){const d=new Date(YEAR_START);for(let i=0;i<m;i++)d.setDate(d.getDate()+DAYS_IN_MONTH[i]);return d;}
+function gfdm(m){const d=new Date(YS);for(let i=0;i<m;i++)d.setDate(d.getDate()+DIM[i]);return d;}
 
 function renderMonth(m){
-    cm=m;
-    const cal=document.getElementById('calendar');
-    const fd=gfdm(m);
-    const sd=pdow(fd);
-    const dim=DAYS_IN_MONTH[m];
-    let h='<div class="month-title">'+MONTHS[m]+' ۱۴۰۵</div>';
-    h+='<div class="nav-btns"><button onclick="goPrev()">◀ '+MONTHS[m-1<0?11:m-1]+'</button><button class="btn-today" onclick="goToday()">📍 امروز</button><button onclick="goNext()">'+MONTHS[m+1>11?0:m+1]+' ▶</button></div>';
+    cm=m;const cal=document.getElementById('calendar');
+    const fd=gfdm(m);const sd=pdow(fd);const dim=DIM[m];
+    let h='<div class="month-title">'+M[m]+' ۱۴۰۵</div>';
+    h+='<div class="nav-btns"><button onclick="goPrev()">◀ '+M[m-1<0?11:m-1]+'</button><button class="btn-today" onclick="goToday()">📍 امروز</button><button onclick="goNext()">'+M[m+1>11?0:m+1]+' ▶</button></div>';
     h+='<div class="grid">';
-    DAY_SHORT.forEach(d=>h+='<div class="day-name">'+d+'</div>');
+    DS.forEach(d=>h+='<div class="day-name">'+d+'</div>');
     for(let i=0;i<sd;i++)h+='<div class="day-cell empty"></div>';
     const cur=new Date(fd);
     for(let d=1;d<=dim;d++){
-        const pd=g2p(cur);
-        const dow=pdow(cur);
-        const dk_=dk(pd.y,pd.m,pd.d);
+        const pd=g2p(cur);const dow=pdow(cur);const dk_=dk(pd.y,pd.m,pd.d);
         let cls='day-cell';
         if(dow===6)cls+=' friday';
         if(dow===5)cls+=' thursday';
         if(pd.y===today.y&&pd.m===today.m&&pd.d===today.d)cls+=' today';
-        if(hasNotes(dk_))cls+=' has-note';
-        h+='<div class="'+cls+'" data-m="'+m+'" data-d="'+d+'" data-key="'+dk_+'">'+pnum(d)+'</div>';
+        if(hn(dk_))cls+=' has-note';
+        h+='<div class="'+cls+'" data-m="'+m+'" data-d="'+d+'" data-key="'+dk_+'">'+pn(d)+'</div>';
         cur.setDate(cur.getDate()+1);
     }
     h+='</div><div id="dayDetail" class="day-detail" style="display:none;"></div>';
@@ -194,57 +163,45 @@ function renderMonth(m){
 }
 
 function showDetail(m,day){
-    const fd=gfdm(m);
-    const td=new Date(fd.getTime()+(day-1)*86400000);
-    const pd=g2p(td);
-    const dow=pdow(td);
-    const dk_=dk(pd.y,pd.m,pd.d);
+    const fd=gfdm(m);const td=new Date(fd.getTime()+(day-1)*86400000);
+    const pd=g2p(td);const dow=pdow(td);const dk_=dk(pd.y,pd.m,pd.d);
     const detail=document.getElementById('dayDetail');
-    let h='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border)"><h3 style="color:#1d4ed8">📅 '+pnum(pd.y)+'/'+String(pd.m).padStart(2,'0')+'/'+String(pd.d).padStart(2,'0')+' - '+DAY_FULL[dow]+'</h3><button class="close-btn" onclick="document.getElementById(\'dayDetail\').style.display=\'none\'">✕</button></div>';
+    let h='<div style="display:flex;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #e5e7eb"><h3 style="color:#1d4ed8">📅 '+pn(pd.y)+'/'+String(pd.m).padStart(2,'0')+'/'+String(pd.d).padStart(2,'0')+' - '+DF[dow]+'</h3><button class="close-btn" onclick="document.getElementById(\'dayDetail\').style.display=\'none\'">✕</button></div>';
     h+='<div class="slots-scroll"><table class="slots-table"><thead><tr><th>⏰ بازه</th><th>📌 عنوان</th><th>📝 توضیحات</th></tr></thead><tbody>';
     let si=0;
     for(let hh=0;hh<24;hh++){
         for(let mm=0;mm<60;mm+=15){
             const s=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-            let eh=hh,em=mm+15;
-            if(em===60){eh++;em=0;}
-            if(eh===24)eh=0;
+            let eh=hh,em=mm+15;if(em===60){eh++;em=0;}if(eh===24)eh=0;
             const e=String(eh).padStart(2,'0')+':'+String(em).padStart(2,'0');
-            const sKey=sk(dk_,si);
-            const note=NOTES[sKey]||{title:'',description:''};
-            const hc=note.title||note.description;
-            h+='<tr><td class="time-col'+(hc?' has-note':'')+'">'+s+'<br>'+e+'</td><td><input class="note-title" data-slot="'+sKey+'" data-field="title" value="'+(note.title||'').replace(/"/g,'&quot;')+'" placeholder="عنوان..."></td><td><input class="note-description" data-slot="'+sKey+'" data-field="description" value="'+(note.description||'').replace(/"/g,'&quot;')+'" placeholder="توضیحات..."></td></tr>';
+            const sKey=sk(dk_,si);const note=NOTES[sKey]||{title:'',desc:''};
+            h+='<tr><td class="time-col'+(note.title||note.desc?' has-note':'')+'">'+s+'<br>'+e+'</td>';
+            h+='<td><input data-slot="'+sKey+'" data-field="title" value="'+(note.title||'').replace(/"/g,'&quot;')+'" placeholder="عنوان..."></td>';
+            h+='<td><input data-slot="'+sKey+'" data-field="desc" value="'+(note.desc||'').replace(/"/g,'&quot;')+'" placeholder="توضیحات..."></td></tr>';
             si++;
         }
     }
     h+='</tbody></table></div>';
-    detail.innerHTML=h;
-    detail.style.display='block';
-    detail.scrollIntoView({behavior:'smooth'});
+    detail.innerHTML=h;detail.style.display='block';detail.scrollIntoView({behavior:'smooth'});
     detail.querySelectorAll('input').forEach(inp=>{
         inp.addEventListener('input',function(){
-            const sKey=this.dataset.slot;
-            const field=this.dataset.field;
-            if(!NOTES[sKey])NOTES[sKey]={title:'',description:''};
+            const sKey=this.dataset.slot;const field=this.dataset.field;
+            if(!NOTES[sKey])NOTES[sKey]={title:'',desc:''};
             NOTES[sKey][field]=this.value;
-            const tr=this.closest('tr');
-            if(tr){const tc=tr.querySelector('.time-col');if(NOTES[sKey].title||NOTES[sKey].description)tc.classList.add('has-note');else tc.classList.remove('has-note');}
-            clearTimeout(this._st);
-            this._st=setTimeout(function(){saveLocal();saveCloud(sKey,NOTES[sKey].title,NOTES[sKey].description);},500);
+            const tr=this.closest('tr');if(tr){const tc=tr.querySelector('.time-col');if(NOTES[sKey].title||NOTES[sKey].desc)tc.classList.add('has-note');else tc.classList.remove('has-note');}
+            clearTimeout(this._st);this._st=setTimeout(function(){save();saveCloud(sKey,NOTES[sKey].title,NOTES[sKey].desc);},500);
         });
     });
 }
 
-// ====== NAV ======
 window.goToday=function(){cm=today.m-1;renderMonth(cm);};
 window.goPrev=function(){cm=cm-1<0?11:cm-1;renderMonth(cm);};
 window.goNext=function(){cm=cm+1>11?0:cm+1;renderMonth(cm);};
 window.toggleTheme=function(){document.body.classList.toggle('dark');localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');};
 
-// ====== INIT ======
-loadLocal();
+load();
 const sel=document.getElementById('monthSelect');
-MONTHS.forEach(function(n,i){const o=document.createElement('option');o.value=i;o.textContent=n;sel.appendChild(o);});
+M.forEach(function(n,i){const o=document.createElement('option');o.value=i;o.textContent=n;sel.appendChild(o);});
 sel.addEventListener('change',function(){renderMonth(parseInt(this.value));});
 if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');
 loadCloud().then(function(){renderMonth(today.m-1);}).catch(function(){renderMonth(today.m-1);});
