@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقویم ۱۴۰۵</title>
     
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
     
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
@@ -31,7 +29,6 @@
             --friday: #ef4444;
             --thursday: #3b82f6;
             --success: #10b981;
-            --syncing: #f59e0b;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow: 0 4px 6px rgba(0,0,0,0.07);
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
@@ -318,7 +315,7 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
             background: var(--primary-light);
         }
-        .slots-table .note-col .note-desc {
+        .slots-table .note-col .note-description {
             width: 100%;
             padding: 8px 10px;
             border: 1px solid var(--border);
@@ -331,7 +328,7 @@
             resize: vertical;
             min-height: 30px;
         }
-        .slots-table .note-col .note-desc:focus {
+        .slots-table .note-col .note-description:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
@@ -355,7 +352,7 @@
             .slots-table th, .slots-table td { padding: 6px 4px; }
             .slots-table .time-col { width: 70px; font-size: 0.7em; }
             .slots-table .note-col .note-title { font-size: 0.75em; padding: 5px 6px; }
-            .slots-table .note-col .note-desc { font-size: 0.7em; padding: 5px 6px; }
+            .slots-table .note-col .note-description { font-size: 0.7em; padding: 5px 6px; }
         }
     </style>
 </head>
@@ -454,7 +451,7 @@ async function loadNotesFromCloud() {
             data.forEach(row => {
                 NOTES[row.slot_key] = {
                     title: row.title || '',
-                    desc: row.desc || ''
+                    description: row.description || ''
                 };
             });
             saveNotesLocally();
@@ -469,7 +466,7 @@ async function loadNotesFromCloud() {
     }
 }
 
-async function saveNoteToCloud(slotKey, title, desc) {
+async function saveNoteToCloud(slotKey, title, description) {
     if (!supabase) return;
     try {
         document.getElementById('syncStatus').textContent = '🔄 در حال ذخیره...';
@@ -481,7 +478,7 @@ async function saveNoteToCloud(slotKey, title, desc) {
                 slot_key: slotKey,
                 year: 1405,
                 title: title,
-                desc: desc,
+                description: description,
                 updated_at: new Date().toISOString()
             });
         
@@ -510,7 +507,7 @@ function saveNotesLocally() {
 function hasNotesForDate(dateKey) {
     for (let i = 0; i < 96; i++) {
         const n = NOTES[getSlotKey(dateKey, i)];
-        if (n && (n.title || n.desc)) return true;
+        if (n && (n.title || n.description)) return true;
     }
     return false;
 }
@@ -617,8 +614,8 @@ function showDayDetail(m, day) {
             const end = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
             
             const sk = getSlotKey(dateKey, slotIndex);
-            const note = NOTES[sk] || { title: '', desc: '' };
-            const hasContent = note.title || note.desc;
+            const note = NOTES[sk] || { title: '', description: '' };
+            const hasContent = note.title || note.description;
             
             html += `
                 <tr>
@@ -633,10 +630,10 @@ function showDayDetail(m, day) {
                     </td>
                     <td class="note-col">
                         <input type="text" 
-                               class="note-desc"
+                               class="note-description"
                                data-slot="${sk}" 
-                               data-field="desc"
-                               value="${(note.desc || '').replace(/"/g, '&quot;')}" 
+                               data-field="description"
+                               value="${(note.description || '').replace(/"/g, '&quot;')}" 
                                placeholder="توضیحات...">
                     </td>
                 </tr>`;
@@ -655,14 +652,14 @@ function showDayDetail(m, day) {
             const slotKey = this.dataset.slot;
             const field = this.dataset.field;
             
-            if (!NOTES[slotKey]) NOTES[slotKey] = { title: '', desc: '' };
+            if (!NOTES[slotKey]) NOTES[slotKey] = { title: '', description: '' };
             NOTES[slotKey][field] = this.value;
             
             const tr = this.closest('tr');
             if (tr) {
                 const tc = tr.querySelector('.time-col');
                 if (tc) {
-                    if (NOTES[slotKey].title || NOTES[slotKey].desc) {
+                    if (NOTES[slotKey].title || NOTES[slotKey].description) {
                         tc.classList.add('has-note');
                     } else {
                         tc.classList.remove('has-note');
@@ -673,7 +670,7 @@ function showDayDetail(m, day) {
             clearTimeout(this._saveTimeout);
             this._saveTimeout = setTimeout(() => {
                 saveNotesLocally();
-                saveNoteToCloud(slotKey, NOTES[slotKey].title, NOTES[slotKey].desc);
+                saveNoteToCloud(slotKey, NOTES[slotKey].title, NOTES[slotKey].description);
             }, 500);
         });
     });
@@ -707,7 +704,6 @@ if (localStorage.getItem('taghvim-theme') === 'dark') {
     document.body.classList.add('dark');
 }
 
-// Load from cloud
 loadNotesFromCloud().then(() => {
     renderMonth(currentMonthIndex);
 }).catch(() => {
