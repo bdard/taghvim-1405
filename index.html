@@ -93,7 +93,7 @@
         let dn=365*(gy-1600)+Math.floor((gy-1600+3)/4)-Math.floor((gy-1600+99)/100)+Math.floor((gy-1600+399)/400);
         for(let i=0;i<gm-1;i++)dn+=gdi[i];
         dn+=gd-1;
-        let pn=dn-79;p=Math.floor(pn/12053);pn%=12053;
+        let pn=dn-79,p=Math.floor(pn/12053);pn%=12053;
         let py=979+33*p+4*Math.floor(pn/1461);pn%=1461;
         if(pn>=366){py+=Math.floor((pn-1)/365);pn=(pn-1)%365;}
         const pdi=[31,31,31,31,31,31,30,30,30,30,30,29];
@@ -124,11 +124,13 @@
         }
     }
     
-    async function saveCloud(sk,t,d){
+    async function saveCloud(sk_,t,d){
         if(!supabase)return;
         try{
             document.getElementById('syncStatus').textContent='🔄 ذخیره...';
-            await supabase.from('notes').upsert({slot_key:sk,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
+            await supabase.from('notes').delete().eq('slot_key',sk_);
+            const{error}=await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
+            if(error)throw error;
             document.getElementById('syncStatus').textContent='✅ ذخیره شد';
             document.getElementById('syncStatus').classList.add('synced');
         }catch(e){
@@ -138,7 +140,7 @@
     
     function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv5')||'{}');}catch(e){NOTES={};}}
     function saveLocal(){localStorage.setItem('tv5',JSON.stringify(NOTES));updateDots();}
-    function hasNotes(dk){for(let i=0;i<96;i++){const n=NOTES[sk(dk,i)];if(n&&(n.title||n.description))return true;}return false;}
+    function hasNotes(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.description))return true;}return false;}
     function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hasNotes(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
     
     function gfdm(m){const d=new Date(YEAR_START);for(let i=0;i<m;i++)d.setDate(d.getDate()+DAYS_IN_MONTH[i]);return d;}
@@ -150,7 +152,7 @@
         const sd=pdow(fd);
         const dim=DAYS_IN_MONTH[m];
         let h=`<div class="month-title">${MONTHS[m]} ۱۴۰۵</div>`;
-        h+=`<div class="nav-btns"><button onclick="window.goPrev()">◀ ${MONTHS[m-1<0?11:m-1]}</button><button class="btn-today" onclick="window.goToday()">📍 امروز</button><button onclick="window.goNext()">${MONTHS[m+1>11?0:m+1]} ▶</button></div>`;
+        h+=`<div class="nav-btns"><button onclick="goPrev()">◀ ${MONTHS[m-1<0?11:m-1]}</button><button class="btn-today" onclick="goToday()">📍 امروز</button><button onclick="goNext()">${MONTHS[m+1>11?0:m+1]} ▶</button></div>`;
         h+=`<div class="grid">`;
         DAY_SHORT.forEach(d=>h+=`<div class="day-name">${d}</div>`);
         for(let i=0;i<sd;i++)h+=`<div class="day-cell empty"></div>`;
