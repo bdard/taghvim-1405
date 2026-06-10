@@ -110,32 +110,6 @@
     const today=g2p(new Date());
     let NOTES={};
     
-    // Realtime - گوش دادن به تغییرات
-// Realtime - گوش دادن به تغییرات
-if(supabase){
-    supabase
-        .channel('notes-rt')
-        .on('postgres_changes',{event:'INSERT',schema:'public',table:'notes'},payload=>{
-            if(payload.new){
-                const r=payload.new;
-                NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
-                saveLocal();
-                updateDots();
-            }
-        })
-        .on('postgres_changes',{event:'UPDATE',schema:'public',table:'notes'},payload=>{
-            if(payload.new){
-                const r=payload.new;
-                NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
-                saveLocal();
-                updateDots();
-            }
-        })
-        .subscribe((status) => {
-            console.log('Realtime status:', status);
-        });
-}
-    
     async function loadCloud(){
         if(!supabase)return;
         try{
@@ -149,44 +123,44 @@ if(supabase){
         }
     }
     
-async function saveCloud(sk_,t,d){
-    if(!supabase)return;
-    try{
-        await supabase.from('notes').delete().eq('slot_key',sk_);
-        await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
-        document.getElementById('syncStatus').textContent='✅ ذخیره شد';
-        document.getElementById('syncStatus').classList.add('synced');
-    }catch(e){
-        document.getElementById('syncStatus').textContent='💾 ذخیره محلی';
-    }
-}
-
-// چک کردن خودکار هر ۵ ثانیه برای آپدیت
-setInterval(async function(){
-    if(!supabase)return;
-    try{
-        const{data}=await supabase.from('notes').select('*').eq('year',1405);
-        if(data){
-            let changed=false;
-            data.forEach(r=>{
-                const old=NOTES[r.slot_key];
-                if(!old||old.title!==r.title||old.description!==r.description){
-                    NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
-                    changed=true;
-                }
-            });
-            if(changed){
-                saveLocal();
-                updateDots();
-                document.getElementById('syncStatus').textContent='✅ همگام شد';
-                document.getElementById('syncStatus').classList.add('synced');
-            }
+    async function saveCloud(sk_,t,d){
+        if(!supabase)return;
+        try{
+            await supabase.from('notes').delete().eq('slot_key',sk_);
+            await supabase.from('notes').insert({slot_key:sk_,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
+            document.getElementById('syncStatus').textContent='✅ ذخیره شد';
+            document.getElementById('syncStatus').classList.add('synced');
+        }catch(e){
+            document.getElementById('syncStatus').textContent='💾 ذخیره محلی';
         }
-    }catch(e){}
-},5000);
+    }
     
-    function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv7')||'{}');}catch(e){NOTES={};}}
-    function saveLocal(){localStorage.setItem('tv7',JSON.stringify(NOTES));updateDots();}
+    // چک کردن خودکار هر ۲ ثانیه
+    setInterval(async function(){
+        if(!supabase)return;
+        try{
+            const{data}=await supabase.from('notes').select('*').eq('year',1405);
+            if(data){
+                let changed=false;
+                data.forEach(r=>{
+                    const old=NOTES[r.slot_key];
+                    if(!old||old.title!==(r.title||'')||old.description!==(r.description||'')){
+                        NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
+                        changed=true;
+                    }
+                });
+                if(changed){
+                    saveLocal();
+                    updateDots();
+                    document.getElementById('syncStatus').textContent='✅ همگام شد';
+                    document.getElementById('syncStatus').classList.add('synced');
+                }
+            }
+        }catch(e){}
+    },2000);
+    
+    function loadLocal(){try{NOTES=JSON.parse(localStorage.getItem('tv8')||'{}');}catch(e){NOTES={};}}
+    function saveLocal(){localStorage.setItem('tv8',JSON.stringify(NOTES));updateDots();}
     function hasNotes(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.description))return true;}return false;}
     function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hasNotes(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
     
