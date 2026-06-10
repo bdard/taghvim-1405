@@ -111,19 +111,30 @@
     let NOTES={};
     
     // Realtime - گوش دادن به تغییرات
-    if(supabase){
-        supabase
-            .channel('notes-rt')
-            .on('postgres_changes',{event:'*',schema:'public',table:'notes'},payload=>{
-                if(payload.new){
-                    const r=payload.new;
-                    NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
-                    saveLocal();
-                    updateDots();
-                }
-            })
-            .subscribe();
-    }
+// Realtime - گوش دادن به تغییرات
+if(supabase){
+    supabase
+        .channel('notes-rt')
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'notes'},payload=>{
+            if(payload.new){
+                const r=payload.new;
+                NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
+                saveLocal();
+                updateDots();
+            }
+        })
+        .on('postgres_changes',{event:'UPDATE',schema:'public',table:'notes'},payload=>{
+            if(payload.new){
+                const r=payload.new;
+                NOTES[r.slot_key]={title:r.title||'',description:r.description||''};
+                saveLocal();
+                updateDots();
+            }
+        })
+        .subscribe((status) => {
+            console.log('Realtime status:', status);
+        });
+}
     
     async function loadCloud(){
         if(!supabase)return;
