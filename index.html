@@ -4,207 +4,892 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقویم ۱۴۰۵</title>
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#6366f1">
     <meta name="mobile-web-app-capable" content="yes">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    
     <style>
-        :root{--bg:#f0f2f5;--card:#fff;--text:#1a1a2e;--border:#e5e7eb;--primary:#3b82f6;--today:#fef3c7;--friday:#ef4444;--thursday:#3b82f6;--success:#10b981;--radius:16px}
-        body.dark{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155;--today:#3e3500}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px;max-width:850px;margin:auto}
-        .header{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:var(--card);padding:14px 18px;border-radius:var(--radius);box-shadow:0 4px 6px rgba(0,0,0,0.07);position:sticky;top:10px;z-index:100;margin-bottom:16px;border:1px solid var(--border)}
-        .header h2{font-size:1.2em;font-weight:800;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .sync-status{font-size:.7em;padding:4px 10px;border-radius:12px;background:#eff6ff;color:#3b82f6}
-        .sync-status.synced{background:#d1fae5;color:#065f46}
-        select,button{padding:10px 16px;border-radius:25px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:.85em}
-        .btn-today{background:#fef3c7;color:#92400e;font-weight:700}
-        .btn-theme{background:#e0e7ff;color:#3730a3}
-        .month-title{text-align:center;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:16px;border-radius:var(--radius);margin-bottom:12px;font-size:1.3em;font-weight:800}
-        .nav-btns{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap}
-        .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 4px 6px rgba(0,0,0,0.07);border:1px solid var(--border);margin-bottom:16px}
-        .grid .day-name{font-weight:700;color:#6b7280;font-size:.75em;padding:8px 2px}
-        .grid .day-cell{padding:12px 4px;border-radius:10px;cursor:pointer;border:2px solid transparent;font-size:.9em;font-weight:500;user-select:none;position:relative}
-        .grid .day-cell:hover{background:#eff6ff;border-color:#3b82f6}
-        .grid .day-cell.today{background:var(--today);border-color:#f59e0b;font-weight:800}
-        .grid .day-cell.selected{background:#dbeafe;border-color:#1d4ed8;font-weight:800}
-        .grid .day-cell.friday{color:var(--friday);font-weight:700}
-        .grid .day-cell.thursday{color:var(--thursday);font-weight:700}
-        .grid .day-cell.has-note::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;background:var(--success)}
-        .day-detail{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:0 10px 15px rgba(0,0,0,0.1);margin-bottom:16px;border:1px solid var(--border)}
-        .close-btn{background:#fee2e2;color:#991b1b;border:none;padding:8px 18px;border-radius:20px;cursor:pointer;font-weight:600;font-size:.85em}
-        .slots-scroll{max-height:60vh;overflow-y:auto;border-radius:10px;border:1px solid var(--border)}
-        .slots-table{width:100%;border-collapse:collapse;font-size:.82em}
-        .slots-table th{background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:12px 10px;position:sticky;top:0;font-size:.9em}
-        .slots-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
-        .slots-table .time-col{width:110px;font-weight:700;text-align:center;color:#1d4ed8;font-size:.85em}
-        .slots-table .time-col.has-note{background:#d1fae5;color:#065f46}
-        .slots-table input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Vazirmatn',Tahoma,sans-serif;font-size:.9em;background:var(--card);color:var(--text)}
-        .slots-table input:focus{outline:none;border-color:#3b82f6}
-        @media(max-width:600px){body{padding:8px}.grid .day-cell{padding:8px 1px;font-size:.75em}.slots-table{font-size:.7em}}
+        /* ============ متغیرهای رنگی ============ */
+        :root {
+            /* پس‌زمینه گرادیانت */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            
+            /* شیشه */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-bg-strong: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            --glass-blur: blur(20px);
+            
+            /* متن */
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.75);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            
+            /* رنگ‌های تاکیدی */
+            --accent: #ffffff;
+            --today: rgba(255, 255, 255, 0.35);
+            --today-border: #ffffff;
+            --friday: #ffb3b3;
+            --thursday: #b3d9ff;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            
+            /* انیمیشن */
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 20px;
+            --radius-sm: 14px;
+        }
+        
+        /* حالت تیره */
+        body.dark {
+            --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-bg-strong: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* ============ پایه ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 12px;
+            transition: background var(--transition);
+            position: relative;
+        }
+        
+        /* حباب‌های تزئینی پس‌زمینه */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: #f093fb;
+            top: -100px;
+            right: -100px;
+        }
+        body::after {
+            width: 500px;
+            height: 500px;
+            background: #4facfe;
+            bottom: -150px;
+            left: -150px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ============ هدر ============ */
+        .header {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            margin-bottom: 16px;
+            transition: all var(--transition);
+        }
+        
+        .header h1 {
+            font-size: 1.3em;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        /* دکمه‌های شیشه‌ای */
+        .glass-btn {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            padding: 9px 14px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .glass-btn:hover {
+            background: var(--glass-bg-strong);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .glass-btn:active {
+            transform: scale(0.96);
+        }
+        
+        /* Badge تعداد */
+        .badge {
+            background: var(--danger);
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 800;
+            min-width: 18px;
+            text-align: center;
+        }
+        
+        /* ============ نوار اطلاعات ============ */
+        .info-bar {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .info-bar .info-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-bar .info-icon {
+            font-size: 1.5em;
+        }
+        .info-bar .info-sub {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        /* ============ تب‌های نما ============ */
+        .view-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius);
+            padding: 6px;
+            margin-bottom: 16px;
+        }
+        .view-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        .view-tab:hover {
+            color: var(--text);
+            background: var(--glass-bg);
+        }
+        .view-tab.active {
+            background: var(--glass-bg-strong);
+            color: var(--text);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* ============ کارت تقویم ============ */
+        .calendar-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .month-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+        .month-nav h2 {
+            font-size: 1.4em;
+            font-weight: 800;
+            flex: 1;
+            text-align: center;
+        }
+        .month-nav .nav-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .month-nav .nav-btn:hover {
+            background: var(--glass-bg-strong);
+            transform: scale(1.1);
+        }
+        
+        /* ============ جدول تقویم ============ */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .day-name-cell {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            padding: 10px 4px;
+            letter-spacing: 0.5px;
+        }
+        
+        .day-cell {
+            aspect-ratio: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all var(--transition);
+            position: relative;
+            user-select: none;
+            padding: 4px;
+        }
+        .day-cell:hover {
+            background: var(--glass-bg-strong);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+        .day-cell:active {
+            transform: scale(0.97);
+        }
+        .day-cell.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+        .day-cell.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .day-cell.today {
+            background: var(--today);
+            border: 2px solid var(--today-border);
+            font-weight: 800;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+        }
+        .day-cell.selected {
+            background: var(--glass-bg-strong);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+        }
+        .day-cell.friday {
+            color: var(--friday);
+        }
+        .day-cell.thursday {
+            color: var(--thursday);
+        }
+        
+        .day-number {
+            font-size: 1em;
+            line-height: 1;
+        }
+        
+        .day-indicator {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+        
+        /* ============ پنجره شناور (Modal) ============ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal {
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .modal-header h3 {
+            font-size: 1.1em;
+            font-weight: 800;
+        }
+        .modal-close {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background: var(--danger);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 18px 22px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        /* ============ اسکرول‌بار شیشه‌ای ============ */
+        .modal-body::-webkit-scrollbar,
+        .slots-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-body::-webkit-scrollbar-track,
+        .slots-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-body::-webkit-scrollbar-thumb,
+        .slots-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        .modal-body::-webkit-scrollbar-thumb:hover,
+        .slots-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* ============ بازه‌های زمانی ============ */
+        .slots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        .slot-row {
+            display: grid;
+            grid-template-columns: 110px 1fr 1fr;
+            gap: 8px;
+            align-items: stretch;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 8px;
+            transition: all var(--transition);
+            position: relative;
+        }
+        .slot-row:hover {
+            background: var(--glass-bg-strong);
+            transform: translateX(-3px);
+        }
+        .slot-row.has-note {
+            border-color: rgba(74, 222, 128, 0.5);
+        }
+        
+        .slot-time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: 700;
+            color: var(--text);
+            background: var(--glass-bg);
+            border-radius: 10px;
+            padding: 6px 4px;
+            letter-spacing: 0.3px;
+            line-height: 1.4;
+        }
+        
+        .slot-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85em;
+            transition: all var(--transition);
+            width: 100%;
+        }
+        .slot-input::placeholder {
+            color: var(--text-muted);
+        }
+        .slot-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ============ منوی Long Press ============ */
+        .context-menu {
+            position: fixed;
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 6px;
+            z-index: 2000;
+            display: none;
+            min-width: 180px;
+            animation: menuPop 0.2s ease;
+        }
+        .context-menu.active {
+            display: block;
+        }
+        
+        @keyframes menuPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all var(--transition);
+            color: var(--text);
+        }
+        .context-menu-item:hover {
+            background: var(--glass-bg);
+        }
+        .context-menu-item.danger {
+            color: var(--danger);
+        }
+        
+        /* ============ ریسپانسیو ============ */
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+            .header {
+                padding: 12px;
+                top: 8px;
+            }
+            .header h1 {
+                font-size: 1em;
+            }
+            .glass-btn {
+                padding: 8px 10px;
+                font-size: 0.75em;
+            }
+            .info-bar {
+                padding: 12px 14px;
+                font-size: 0.8em;
+            }
+            .calendar-card {
+                padding: 14px;
+            }
+            .calendar-grid {
+                gap: 4px;
+            }
+            .day-cell {
+                font-size: 0.85em;
+                border-radius: 10px;
+            }
+            .month-nav h2 {
+                font-size: 1.1em;
+            }
+            .month-nav .nav-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .modal {
+                max-height: 95vh;
+            }
+            .slot-row {
+                grid-template-columns: 80px 1fr;
+                grid-template-rows: auto auto;
+            }
+            .slot-time {
+                grid-row: span 2;
+                font-size: 0.7em;
+            }
+            .slot-input {
+                font-size: 0.8em;
+                padding: 6px 8px;
+            }
+        }
+        
+        /* ============ انیمیشن‌های ورود ============ */
+        .fade-in-up {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h2>📅 تقویم ۱۴۰۵</h2>
-    <span class="sync-status" id="syncStatus">🔄</span>
-    <select id="monthSelect"></select>
-    <button class="btn-today" onclick="goToday()">📍 امروز</button>
-    <button class="btn-theme" onclick="toggleTheme()">🌓</button>
+<div class="container">
+    
+    <!-- ============ هدر ============ -->
+    <header class="header fade-in-up">
+        <h1>📅 تقویم ۱۴۰۵</h1>
+        <div class="header-actions">
+            <button class="glass-btn" onclick="openPending()" title="کارهای عقب‌افتاده">
+                ⏳ <span class="badge" id="pendingBadge">۰</span>
+            </button>
+            <button class="glass-btn" onclick="openSettings()" title="تنظیمات">
+                ⚙️
+            </button>
+            <button class="glass-btn" onclick="toggleTheme()" title="تغییر تم">
+                🌓
+            </button>
+        </div>
+    </header>
+    
+    <!-- ============ نوار اطلاعات ============ -->
+    <div class="info-bar fade-in-up">
+        <div class="info-main">
+            <span class="info-icon">📊</span>
+            <span id="todaySummary">امروز ۰ ساعت برنامه داری</span>
+        </div>
+        <div class="info-sub" id="todayDate">۱۴۰۵/۰۱/۰۱</div>
+    </div>
+    
+    <!-- ============ تب‌های نما ============ -->
+    <div class="view-tabs fade-in-up">
+        <button class="view-tab active" onclick="switchView('month')">📅 ماهانه</button>
+        <button class="view-tab" onclick="switchView('week')">📆 هفتگی</button>
+        <button class="view-tab" onclick="switchView('day')">📋 روزانه</button>
+    </div>
+    
+    <!-- ============ کارت تقویم ============ -->
+    <div class="calendar-card fade-in-up">
+        <div class="month-nav">
+            <button class="nav-btn" onclick="prevMonth()">◀</button>
+            <h2 id="monthTitle">فروردین ۱۴۰۵</h2>
+            <button class="nav-btn" onclick="nextMonth()">▶</button>
+        </div>
+        
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- با JS پر میشه -->
+        </div>
+    </div>
+    
 </div>
 
-<div id="calendar"></div>
+<!-- ============ پنجره شناور روز ============ -->
+<div class="modal-overlay" id="dayModal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 id="modalTitle">📅 ۱۴۰۵/۰۱/۰۱ - شنبه</h3>
+            <button class="modal-close" onclick="closeDayModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="slots-container" id="slotsContainer">
+                <!-- با JS پر میشه -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ منوی Long Press ============ -->
+<div class="context-menu" id="contextMenu">
+    <div class="context-menu-item" onclick="menuAction('toggleCheck')">
+        ✅ <span id="menuToggleText">فعال کردن تیک</span>
+    </div>
+    <div class="context-menu-item" onclick="menuAction('clear')">
+        🗑️ پاک کردن
+    </div>
+</div>
 
 <script>
-const SB = window.supabase.createClient('https://moaofxlfantlijlkmcoi.supabase.co','sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R');
-document.getElementById('syncStatus').textContent='✅ آنلاین';
-document.getElementById('syncStatus').classList.add('synced');
+// ============ این تیکه فقط برای نمایشه ============
+// منطق کامل توی تیکه‌های بعدی اضافه میشه
 
-const M=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const DS=['ش','ی','د','س','چ','پ','ج'];
-const DF=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'];
-const DIM=[31,31,31,31,31,31,30,30,30,30,30,29];
-const YS=new Date(2026,2,21);
+const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
+const DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
 
-function g2p(d){
-    const gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate();
-    const gdi=[31,28,31,30,31,30,31,31,30,31,30,31];
-    if((gy%4===0&&gy%100!==0)||gy%400===0)gdi[1]=29;
-    let dn=365*(gy-1600)+Math.floor((gy-1600+3)/4)-Math.floor((gy-1600+99)/100)+Math.floor((gy-1600+399)/400);
-    for(let i=0;i<gm-1;i++)dn+=gdi[i];dn+=gd-1;
-    let pn=dn-79,pp=Math.floor(pn/12053);pn%=12053;
-    let py=979+33*pp+4*Math.floor(pn/1461);pn%=1461;
-    if(pn>=366){py+=Math.floor((pn-1)/365);pn=(pn-1)%365;}
-    const pdi=[31,31,31,31,31,31,30,30,30,30,30,29];
-    let pm=0;while(pn>=pdi[pm]&&pm<11){pn-=pdi[pm];pm++;}
-    return{y:py,m:pm+1,d:pn+1};
-}
-function pdow(d){return(d.getDay()+1)%7;}
-function pn(n){return String(n).split('').map(c=>'۰۱۲۳۴۵۶۷۸۹'[c]).join('');}
-function dk(y,m,d){return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
-function sk(d,i){return d+'-s'+i;}
+let currentMonth = 0;
+let isDark = false;
 
-let cm=0;
-const today=g2p(new Date());
-let NOTES={};
-
-async function loadCloud(){
-    try{
-        const{data}=await SB.from('notes').select('*').eq('year',1405);
-        if(data){data.forEach(r=>{NOTES[r.slot_key]={title:r.title||'',desc:r.description||''};});}
-        save();updateDots();
-        document.getElementById('syncStatus').textContent='✅ همگام';
-        document.getElementById('syncStatus').classList.add('synced');
-    }catch(e){}
-}
-
-async function saveCloud(k,t,d){
-    try{
-        await SB.from('notes').delete().eq('slot_key',k);
-        await SB.from('notes').insert({slot_key:k,year:1405,title:t,description:d,updated_at:new Date().toISOString()});
-        document.getElementById('syncStatus').textContent='✅ ذخیره شد';
-        document.getElementById('syncStatus').classList.add('synced');
-    }catch(e){}
-}
-
-setInterval(async function(){
-    try{
-        const{data}=await SB.from('notes').select('*').eq('year',1405);
-        if(data){
-            let c=false;
-            data.forEach(r=>{
-                const o=NOTES[r.slot_key];
-                if(!o||o.title!==(r.title||'')||o.desc!==(r.description||'')){
-                    NOTES[r.slot_key]={title:r.title||'',desc:r.description||''};c=true;
-                }
-            });
-            if(c){save();updateDots();}
-        }
-    }catch(e){}
-},3000);
-
-function load(){try{NOTES=JSON.parse(localStorage.getItem('tv10')||'{}');}catch(e){NOTES={};}}
-function save(){localStorage.setItem('tv10',JSON.stringify(NOTES));updateDots();}
-function hn(dk_){for(let i=0;i<96;i++){const n=NOTES[sk(dk_,i)];if(n&&(n.title||n.desc))return true;}return false;}
-function updateDots(){document.querySelectorAll('.day-cell[data-key]').forEach(c=>{if(hn(c.dataset.key))c.classList.add('has-note');else c.classList.remove('has-note');});}
-
-function gfdm(m){const d=new Date(YS);for(let i=0;i<m;i++)d.setDate(d.getDate()+DIM[i]);return d;}
-
-function renderMonth(m){
-    cm=m;const cal=document.getElementById('calendar');
-    const fd=gfdm(m);const sd=pdow(fd);const dim=DIM[m];
-    let h='<div class="month-title">'+M[m]+' ۱۴۰۵</div>';
-    h+='<div class="nav-btns"><button onclick="goPrev()">◀ '+M[m-1<0?11:m-1]+'</button><button class="btn-today" onclick="goToday()">📍 امروز</button><button onclick="goNext()">'+M[m+1>11?0:m+1]+' ▶</button></div>';
-    h+='<div class="grid">';
-    DS.forEach(d=>h+='<div class="day-name">'+d+'</div>');
-    for(let i=0;i<sd;i++)h+='<div class="day-cell empty"></div>';
-    const cur=new Date(fd);
-    for(let d=1;d<=dim;d++){
-        const pd=g2p(cur);const dow=pdow(cur);const dk_=dk(pd.y,pd.m,pd.d);
-        let cls='day-cell';
-        if(dow===6)cls+=' friday';
-        if(dow===5)cls+=' thursday';
-        if(pd.y===today.y&&pd.m===today.m&&pd.d===today.d)cls+=' today';
-        if(hn(dk_))cls+=' has-note';
-        h+='<div class="'+cls+'" data-m="'+m+'" data-d="'+d+'" data-key="'+dk_+'">'+pn(d)+'</div>';
-        cur.setDate(cur.getDate()+1);
-    }
-    h+='</div><div id="dayDetail" class="day-detail" style="display:none;"></div>';
-    cal.innerHTML=h;
-    document.getElementById('monthSelect').value=m;
-    cal.querySelectorAll('.day-cell:not(.empty)').forEach(cell=>{
-        cell.addEventListener('click',function(){
-            cal.querySelectorAll('.day-cell.selected').forEach(c=>c.classList.remove('selected'));
-            this.classList.add('selected');
-            showDetail(parseInt(this.dataset.m),parseInt(this.dataset.d));
-        });
+// نمایش تقویم (نمایشی)
+function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const title = document.getElementById('monthTitle');
+    
+    title.textContent = MONTHS[currentMonth] + ' ۱۴۰۵';
+    
+    let html = '';
+    
+    // نام روزها
+    DAY_SHORT.forEach(d => {
+        html += `<div class="day-name-cell">${d}</div>`;
     });
+    
+    // خونه‌های خالی + روزها
+    // فروردین ۱۴۰۵ از شنبه شروع میشه
+    const firstDayOffset = (currentMonth === 0) ? 0 : 0; // برای نمایش ساده
+    
+    for (let i = 0; i < firstDayOffset; i++) {
+        html += `<div class="day-cell empty"></div>`;
+    }
+    
+    const daysCount = DAYS_IN_MONTH[currentMonth];
+    for (let d = 1; d <= daysCount; d++) {
+        const isFriday = ((d + firstDayOffset - 1) % 7) === 6;
+        const isThursday = ((d + firstDayOffset - 1) % 7) === 5;
+        const isToday = (currentMonth === 0 && d === 1); // فرضی
+        
+        let cls = 'day-cell';
+        if (isFriday) cls += ' friday';
+        if (isThursday) cls += ' thursday';
+        if (isToday) cls += ' today';
+        
+        html += `<div class="${cls}" onclick="openDay(${d})">
+            <span class="day-number">${toPersianNum(d)}</span>
+        </div>`;
+    }
+    
+    grid.innerHTML = html;
 }
 
-function showDetail(m,day){
-    const fd=gfdm(m);const td=new Date(fd.getTime()+(day-1)*86400000);
-    const pd=g2p(td);const dow=pdow(td);const dk_=dk(pd.y,pd.m,pd.d);
-    const detail=document.getElementById('dayDetail');
-    let h='<div style="display:flex;justify-content:space-between;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #e5e7eb"><h3 style="color:#1d4ed8">📅 '+pn(pd.y)+'/'+String(pd.m).padStart(2,'0')+'/'+String(pd.d).padStart(2,'0')+' - '+DF[dow]+'</h3><button class="close-btn" onclick="document.getElementById(\'dayDetail\').style.display=\'none\'">✕</button></div>';
-    h+='<div class="slots-scroll"><table class="slots-table"><thead><tr><th>⏰ بازه</th><th>📌 عنوان</th><th>📝 توضیحات</th></tr></thead><tbody>';
-    let si=0;
-    for(let hh=0;hh<24;hh++){
-        for(let mm=0;mm<60;mm+=15){
-            const s=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-            let eh=hh,em=mm+15;if(em===60){eh++;em=0;}if(eh===24)eh=0;
-            const e=String(eh).padStart(2,'0')+':'+String(em).padStart(2,'0');
-            const sKey=sk(dk_,si);const note=NOTES[sKey]||{title:'',desc:''};
-            h+='<tr><td class="time-col'+(note.title||note.desc?' has-note':'')+'">'+s+'<br>'+e+'</td>';
-            h+='<td><input data-slot="'+sKey+'" data-field="title" value="'+(note.title||'').replace(/"/g,'&quot;')+'" placeholder="عنوان..."></td>';
-            h+='<td><input data-slot="'+sKey+'" data-field="desc" value="'+(note.desc||'').replace(/"/g,'&quot;')+'" placeholder="توضیحات..."></td></tr>';
-            si++;
+function toPersianNum(n) {
+    return String(n).split('').map(c => '۰۱۲۳۴۵۶۷۸۹'[c]).join('');
+}
+
+function prevMonth() {
+    currentMonth = (currentMonth - 1 + 12) % 12;
+    renderCalendar();
+}
+
+function nextMonth() {
+    currentMonth = (currentMonth + 1) % 12;
+    renderCalendar();
+}
+
+function openDay(d) {
+    document.getElementById('modalTitle').textContent = 
+        '📅 ' + MONTHS[currentMonth] + ' ' + toPersianNum(d) + ' - روز';
+    
+    const container = document.getElementById('slotsContainer');
+    let html = '';
+    
+    // فقط ۰۶:۴۰ تا ۲۳:۴۵ رو نشون بده (ساعت خواب مخفی)
+    for (let h = 6; h < 24; h++) {
+        for (let m = 0; m < 60; m += 15) {
+            if (h === 6 && m < 40) continue; // پرش از ۰۰:۰۰ تا ۰۶:۴۰
+            
+            const start = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+            let eh = h, em = m + 15;
+            if (em === 60) { eh++; em = 0; }
+            if (eh === 24) eh = 0;
+            const end = String(eh).padStart(2,'0') + ':' + String(em).padStart(2,'0');
+            
+            html += `<div class="slot-row">
+                <div class="slot-time">${start}<br>${end}</div>
+                <input class="slot-input" placeholder="عنوان...">
+                <input class="slot-input" placeholder="توضیحات...">
+            </div>`;
         }
     }
-    h+='</tbody></table></div>';
-    detail.innerHTML=h;detail.style.display='block';detail.scrollIntoView({behavior:'smooth'});
-    detail.querySelectorAll('input').forEach(inp=>{
-        inp.addEventListener('input',function(){
-            const sKey=this.dataset.slot;const field=this.dataset.field;
-            if(!NOTES[sKey])NOTES[sKey]={title:'',desc:''};
-            NOTES[sKey][field]=this.value;
-            const tr=this.closest('tr');if(tr){const tc=tr.querySelector('.time-col');if(NOTES[sKey].title||NOTES[sKey].desc)tc.classList.add('has-note');else tc.classList.remove('has-note');}
-            clearTimeout(this._st);this._st=setTimeout(function(){save();saveCloud(sKey,NOTES[sKey].title,NOTES[sKey].desc);},500);
-        });
-    });
+    
+    container.innerHTML = html;
+    document.getElementById('dayModal').classList.add('active');
 }
 
-window.goToday=function(){cm=today.m-1;renderMonth(cm);};
-window.goPrev=function(){cm=cm-1<0?11:cm-1;renderMonth(cm);};
-window.goNext=function(){cm=cm+1>11?0:cm+1;renderMonth(cm);};
-window.toggleTheme=function(){document.body.classList.toggle('dark');localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');};
+function closeDayModal() {
+    document.getElementById('dayModal').classList.remove('active');
+}
 
-load();
-const sel=document.getElementById('monthSelect');
-M.forEach(function(n,i){const o=document.createElement('option');o.value=i;o.textContent=n;sel.appendChild(o);});
-sel.addEventListener('change',function(){renderMonth(parseInt(this.value));});
-if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');
-loadCloud().then(function(){renderMonth(today.m-1);}).catch(function(){renderMonth(today.m-1);});
+function closeModal(e) {
+    if (e.target.id === 'dayModal') {
+        closeDayModal();
+    }
+}
+
+function switchView(v) {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    // منطق توی تیکه بعدی
+}
+
+function toggleTheme() {
+    isDark = !isDark;
+    document.body.classList.toggle('dark', isDark);
+}
+
+function openPending() {
+    alert('لیست کارهای عقب‌افتاده - توی تیکه بعدی');
+}
+
+function openSettings() {
+    alert('تنظیمات - توی تیکه بعدی');
+}
+
+function menuAction(a) {
+    document.getElementById('contextMenu').classList.remove('active');
+    // منطق توی تیکه بعدی
+}
+
+// ============ راه‌اندازی ============
+renderCalendar();
 </script>
 </body>
 </html>
