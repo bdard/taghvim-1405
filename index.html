@@ -4,36 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقویم ۱۴۰۵</title>
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#1a1f2e">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f172a'/><text x='50' y='65' font-size='50' fill='white' text-anchor='middle' font-family='serif'>۱۴۰۵</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a1f2e'/><text x='50' y='68' font-size='48' fill='white' text-anchor='middle' font-family='serif'>۱۴۰۵</text></svg>">
     <link rel="manifest" href="manifest.json">
     
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     
     <style>
+        /* ============ متغیرها ============ */
         :root {
-            /* رنگ‌های اصلی - خاکستری و سرمه‌ای */
             --bg-primary: #1a1f2e;
             --bg-secondary: #232838;
             --bg-tertiary: #2d3345;
             --bg-elevated: #363d52;
             
-            /* شیشه مات */
             --glass-bg: rgba(45, 51, 69, 0.7);
             --glass-bg-strong: rgba(54, 61, 82, 0.85);
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             
-            /* متن */
             --text-primary: #e8eaf0;
             --text-secondary: #9ba3b8;
             --text-muted: #6b7285;
             
-            /* رنگ‌های تاکیدی */
             --accent-primary: #4a6fa5;
             --accent-secondary: #5d82b8;
             --accent-hover: #6089c7;
@@ -45,20 +43,18 @@
             --warning: #c4a55d;
             --danger: #b85c5c;
             
-            /* فاصله و انیمیشن */
             --transition: 0.2s ease;
             --radius: 8px;
             --radius-sm: 6px;
             --radius-lg: 12px;
         }
         
-        /* حالت روشن (اختیاری) */
         body.light {
             --bg-primary: #e8eaf0;
             --bg-secondary: #dcdfe8;
             --bg-tertiary: #cdd2dd;
             --bg-elevated: #ffffff;
-            --glass-bg: rgba(220, 223, 232, 0.8);
+            --glass-bg: rgba(220, 223, 232, 0.85);
             --glass-bg-strong: rgba(255, 255, 255, 0.95);
             --glass-border: rgba(0, 0, 0, 0.08);
             --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -66,6 +62,7 @@
             --text-secondary: #4a5468;
             --text-muted: #7a8499;
             --accent-primary: #3a5a8a;
+            --accent-secondary: #4a6fa5;
             --today-bg: #4a6fa5;
             --today-border: #3a5a8a;
         }
@@ -92,12 +89,11 @@
             position: relative;
         }
         
-        /* الگوی نقطه‌ای پس‌زمینه */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
             background-size: 30px 30px;
             pointer-events: none;
             z-index: 0;
@@ -134,7 +130,6 @@
             font-size: 1.15em;
             font-weight: 700;
             letter-spacing: 0.3px;
-            color: var(--text-primary);
         }
         .header h1::before {
             content: '';
@@ -154,7 +149,6 @@
             align-items: center;
         }
         
-        /* دکمه‌های گوشه‌دار */
         .btn {
             background: var(--bg-tertiary);
             border: 1px solid var(--glass-border);
@@ -171,7 +165,6 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
-            letter-spacing: 0.2px;
         }
         .btn:hover {
             background: var(--bg-elevated);
@@ -181,8 +174,6 @@
         .btn:active {
             transform: translateY(1px);
         }
-        
-        /* آیکون ساده SVG */
         .btn svg {
             width: 14px;
             height: 14px;
@@ -190,7 +181,6 @@
             opacity: 0.8;
         }
         
-        /* Badge */
         .badge {
             background: var(--danger);
             color: white;
@@ -225,14 +215,19 @@
             align-items: center;
             gap: 10px;
             font-weight: 500;
-            color: var(--text-primary);
         }
         .info-main .label {
             color: var(--text-muted);
-            font-size: 0.85em;
+            font-size: 0.75em;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+        }
+        .info-main .value {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.05em;
+            font-variant-numeric: tabular-nums;
         }
         .info-date {
             color: var(--text-secondary);
@@ -240,7 +235,7 @@
             font-variant-numeric: tabular-nums;
         }
         
-        /* ============ تب‌های نما ============ */
+        /* ============ تب‌ها ============ */
         .view-tabs {
             display: flex;
             gap: 4px;
@@ -266,7 +261,6 @@
             font-weight: 600;
             transition: all var(--transition);
             white-space: nowrap;
-            letter-spacing: 0.3px;
         }
         .view-tab:hover {
             color: var(--text-primary);
@@ -274,7 +268,6 @@
         .view-tab.active {
             background: var(--accent-primary);
             color: white;
-            box-shadow: 0 2px 8px rgba(74, 111, 165, 0.3);
         }
         
         /* ============ کارت تقویم ============ */
@@ -304,7 +297,6 @@
             flex: 1;
             text-align: center;
             letter-spacing: 0.5px;
-            color: var(--text-primary);
         }
         .nav-btn {
             background: transparent;
@@ -314,7 +306,7 @@
             height: 40px;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em;
             transition: all var(--transition);
             display: flex;
             align-items: center;
@@ -326,8 +318,11 @@
             color: var(--accent-primary);
             border-color: var(--accent-primary);
         }
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
         
-        /* ============ جدول تقویم ============ */
+        /* ============ تقویم ============ */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -341,7 +336,6 @@
             font-size: 0.75em;
             padding: 10px 4px;
             letter-spacing: 1px;
-            text-transform: uppercase;
         }
         
         .day-cell {
@@ -360,7 +354,6 @@
             position: relative;
             user-select: none;
             padding: 4px;
-            color: var(--text-primary);
         }
         .day-cell:hover {
             background: var(--bg-tertiary);
@@ -414,6 +407,125 @@
             background: var(--success);
         }
         
+        /* ============ نمای هفتگی ============ */
+        .week-view {
+            display: none;
+        }
+        .week-view.active {
+            display: block;
+        }
+        .week-header {
+            display: grid;
+            grid-template-columns: 70px repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+            position: sticky;
+            top: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 8px 0;
+            z-index: 5;
+            border-radius: var(--radius-sm);
+        }
+        .week-header-cell {
+            text-align: center;
+            padding: 8px 4px;
+            font-weight: 600;
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+        }
+        .week-header-cell.today {
+            background: var(--accent-primary);
+            color: white;
+        }
+        .week-header-cell .wd {
+            display: block;
+            font-size: 0.7em;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+        .week-header-cell.today .wd {
+            color: rgba(255,255,255,0.8);
+        }
+        .week-header-cell .dn {
+            font-size: 1em;
+            font-weight: 700;
+        }
+        .week-body {
+            display: grid;
+            grid-template-columns: 70px repeat(7, 1fr);
+            gap: 4px;
+        }
+        .week-time-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .week-time-label {
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65em;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+        .week-day-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .week-slot {
+            height: 22px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.6em;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .week-slot:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+        .week-slot.has-note {
+            background: rgba(74, 111, 165, 0.2);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+        .week-slot.has-note.done {
+            background: rgba(107, 165, 116, 0.2);
+            border-color: var(--success);
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+        .week-slot.sleep {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: transparent;
+            cursor: default;
+            opacity: 0.4;
+        }
+        .week-slot.sleep:hover {
+            border-color: transparent;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* ============ نمای روزانه ============ */
+        .day-view {
+            display: none;
+        }
+        .day-view.active {
+            display: block;
+        }
+        
         /* ============ پنجره شناور ============ */
         .modal-overlay {
             position: fixed;
@@ -452,14 +564,8 @@
         }
         
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .modal-header {
@@ -474,8 +580,12 @@
         .modal-header h3 {
             font-size: 1em;
             font-weight: 600;
-            color: var(--text-primary);
             letter-spacing: 0.3px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
         .modal-close {
             background: transparent;
@@ -523,7 +633,7 @@
             background: var(--accent-primary);
         }
         
-        /* ============ بازه‌های زمانی ============ */
+        /* ============ بازه‌ها ============ */
         .slots-container {
             display: flex;
             flex-direction: column;
@@ -543,12 +653,25 @@
             border-radius: var(--radius-sm);
             padding: 6px;
             transition: all var(--transition);
+            position: relative;
         }
         .slot-row:hover {
             border-color: var(--accent-primary);
         }
         .slot-row.has-note {
+            border-right: 3px solid var(--accent-primary);
+        }
+        .slot-row.done {
             border-right: 3px solid var(--success);
+            opacity: 0.7;
+        }
+        .slot-row.sleep {
+            background: rgba(0, 0, 0, 0.15);
+            border-color: transparent;
+            opacity: 0.5;
+        }
+        .slot-row.sleep:hover {
+            border-color: transparent;
         }
         
         .slot-time {
@@ -561,7 +684,6 @@
             background: var(--bg-secondary);
             border-radius: var(--radius-sm);
             padding: 6px 4px;
-            letter-spacing: 0.5px;
             font-variant-numeric: tabular-nums;
         }
         
@@ -585,6 +707,39 @@
             border-color: var(--accent-primary);
         }
         
+        .slot-check {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: transparent;
+            flex-shrink: 0;
+        }
+        .slot-row.has-check .slot-check {
+            display: flex;
+        }
+        .slot-check:hover {
+            border-color: var(--accent-primary);
+        }
+        .slot-check.checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        .slot-check.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+        .slot-row.has-check {
+            grid-template-columns: 110px 40px 1fr 1fr;
+        }
+        
         /* ============ منوی Long Press ============ */
         .context-menu {
             position: fixed;
@@ -595,7 +750,7 @@
             padding: 4px;
             z-index: 2000;
             display: none;
-            min-width: 180px;
+            min-width: 200px;
             animation: menuPop 0.15s ease;
         }
         .context-menu.active {
@@ -603,14 +758,8 @@
         }
         
         @keyframes menuPop {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         
         .context-menu-item {
@@ -636,81 +785,142 @@
             background: rgba(184, 92, 92, 0.15);
         }
         
-        /* ============ ریسپانسیو ============ */
-        @media (max-width: 600px) {
-            body {
-                padding: 8px;
-            }
-            .header {
-                padding: 12px 14px;
-                top: 8px;
-            }
-            .header h1 {
-                font-size: 0.95em;
-            }
-            .header h1::before {
-                height: 16px;
-            }
-            .btn {
-                padding: 8px 12px;
-                font-size: 0.75em;
-            }
-            .info-bar {
-                padding: 12px 14px;
-                font-size: 0.8em;
-            }
-            .calendar-card {
-                padding: 14px;
-            }
-            .calendar-grid {
-                gap: 3px;
-            }
-            .day-cell {
-                font-size: 0.85em;
-                border-radius: 4px;
-            }
-            .day-name-cell {
-                font-size: 0.65em;
-                padding: 6px 2px;
-            }
-            .month-nav h2 {
-                font-size: 1em;
-            }
-            .month-nav .nav-btn {
-                width: 34px;
-                height: 34px;
-            }
-            .modal {
-                max-height: 95vh;
-            }
-            .slot-row {
-                grid-template-columns: 80px 1fr;
-                grid-template-rows: auto auto;
-            }
-            .slot-time {
-                grid-row: span 2;
-                font-size: 0.7em;
-            }
-            .slot-input {
-                font-size: 0.8em;
-                padding: 6px 8px;
-            }
+        /* ============ تنظیمات ============ */
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .settings-group input,
+        .settings-group select {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9em;
+            transition: all var(--transition);
+        }
+        .settings-group input:focus,
+        .settings-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        .settings-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         
-        /* ============ انیمیشن ورود ============ */
+        /* ============ لیست عقب‌افتاده ============ */
+        .pending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .pending-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all var(--transition);
+        }
+        .pending-item:hover {
+            border-color: var(--accent-primary);
+        }
+        .pending-item .pi-info {
+            flex: 1;
+        }
+        .pending-item .pi-title {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+        }
+        .pending-item .pi-meta {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+        .pending-item .pi-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .pending-item .pi-actions button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+        }
+        .pending-item .pi-actions button:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+        .pending-item .pi-actions button.done:hover {
+            color: var(--success);
+            border-color: var(--success);
+        }
+        .pending-item .pi-actions button.del:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        
+        /* ============ ریسپانسیو ============ */
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .header { padding: 12px 14px; top: 8px; }
+            .header h1 { font-size: 0.95em; }
+            .header h1::before { height: 16px; }
+            .btn { padding: 8px 12px; font-size: 0.75em; }
+            .btn svg { width: 12px; height: 12px; }
+            .info-bar { padding: 12px 14px; font-size: 0.8em; }
+            .calendar-card { padding: 14px; }
+            .calendar-grid { gap: 3px; }
+            .day-cell { font-size: 0.85em; border-radius: 4px; }
+            .day-name-cell { font-size: 0.65em; padding: 6px 2px; }
+            .month-nav h2 { font-size: 1em; }
+            .nav-btn { width: 34px; height: 34px; }
+            .modal { max-height: 95vh; }
+            .slot-row { grid-template-columns: 80px 1fr; grid-template-rows: auto auto; }
+            .slot-row.has-check { grid-template-columns: 80px 32px 1fr; }
+            .slot-time { grid-row: span 2; font-size: 0.7em; }
+            .slot-input { font-size: 0.8em; padding: 6px 8px; }
+            .slot-check { grid-row: span 2; width: 28px; height: 28px; }
+            .week-header, .week-body { grid-template-columns: 50px repeat(7, 1fr); }
+            .week-time-label { font-size: 0.55em; height: 18px; }
+            .week-slot { height: 18px; font-size: 0.55em; }
+        }
+        
         .fade-in-up {
             animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -718,7 +928,7 @@
 
 <div class="container">
     
-    <!-- ============ هدر ============ -->
+    <!-- هدر -->
     <header class="header fade-in-up">
         <h1>تقویم ۱۴۰۵</h1>
         <div class="header-actions">
@@ -736,112 +946,461 @@
         </div>
     </header>
     
-    <!-- ============ نوار اطلاعات ============ -->
+    <!-- نوار اطلاعات -->
     <div class="info-bar fade-in-up">
         <div class="info-main">
             <span class="label">برنامه امروز</span>
-            <span id="todaySummary">۰ ساعت</span>
+            <span class="value" id="todaySummary">۰ ساعت</span>
         </div>
         <div class="info-date" id="todayDate">۱۴۰۵/۰۱/۰۱</div>
     </div>
     
-    <!-- ============ تب‌های نما ============ -->
+    <!-- تب‌ها -->
     <div class="view-tabs fade-in-up">
         <button class="view-tab active" onclick="switchView('month', this)">ماهانه</button>
         <button class="view-tab" onclick="switchView('week', this)">هفتگی</button>
         <button class="view-tab" onclick="switchView('day', this)">روزانه</button>
     </div>
     
-    <!-- ============ کارت تقویم ============ -->
-    <div class="calendar-card fade-in-up">
+    <!-- نمای ماهانه -->
+    <div class="calendar-card fade-in-up" id="monthView">
         <div class="month-nav">
             <button class="nav-btn" onclick="prevMonth()">‹</button>
             <h2 id="monthTitle">فروردین ۱۴۰۵</h2>
             <button class="nav-btn" onclick="nextMonth()">›</button>
         </div>
-        
-        <div class="calendar-grid" id="calendarGrid">
-            <!-- با JS پر میشه -->
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+    
+    <!-- نمای هفتگی -->
+    <div class="calendar-card fade-in-up week-view" id="weekView">
+        <div class="month-nav">
+            <button class="nav-btn" onclick="prevWeek()">‹</button>
+            <h2 id="weekTitle">هفته ۱</h2>
+            <button class="nav-btn" onclick="nextWeek()">›</button>
         </div>
+        <div id="weekContainer"></div>
+    </div>
+    
+    <!-- نمای روزانه -->
+    <div class="calendar-card fade-in-up day-view" id="dayView">
+        <div class="month-nav">
+            <button class="nav-btn" onclick="prevDay()">‹</button>
+            <h2 id="dayTitle">۱۴۰۵/۰۱/۰۱</h2>
+            <button class="nav-btn" onclick="nextDay()">›</button>
+        </div>
+        <div class="slots-container" id="dayViewSlots"></div>
     </div>
     
 </div>
 
-<!-- ============ پنجره شناور روز ============ -->
+<!-- مودال روز -->
 <div class="modal-overlay" id="dayModal" onclick="closeModal(event)">
     <div class="modal" onclick="event.stopPropagation()">
         <div class="modal-header">
             <h3 id="modalTitle">۱۴۰۵/۰۱/۰۱ - شنبه</h3>
-            <button class="modal-close" onclick="closeDayModal()">✕</button>
+            <div class="modal-actions">
+                <button class="modal-close" onclick="closeDayModal()">✕</button>
+            </div>
         </div>
         <div class="modal-body">
-            <div class="slots-container" id="slotsContainer">
-                <!-- با JS پر میشه -->
-            </div>
+            <div class="slots-container" id="slotsContainer"></div>
         </div>
     </div>
 </div>
 
-<!-- ============ منوی Long Press ============ -->
+<!-- مودال تنظیمات -->
+<div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>تنظیمات</h3>
+            <button class="modal-close" onclick="closeSettingsModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="settings-group">
+                <label>ساعت شروع خواب</label>
+                <input type="time" id="sleepStart" value="00:00">
+            </div>
+            <div class="settings-group">
+                <label>ساعت پایان خواب</label>
+                <input type="time" id="sleepEnd" value="06:40">
+            </div>
+            <button class="btn" onclick="saveSettings()" style="width:100%;justify-content:center;background:var(--accent-primary);color:white;padding:12px;">
+                ذخیره تنظیمات
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- مودال عقب‌افتاده -->
+<div class="modal-overlay" id="pendingModal" onclick="closePendingModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>کارهای عقب‌افتاده</h3>
+            <button class="modal-close" onclick="closePendingModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="pending-list" id="pendingList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- منوی Long Press -->
 <div class="context-menu" id="contextMenu">
     <div class="context-menu-item" onclick="menuAction('toggleCheck')">
         <span id="menuToggleText">فعال کردن تیک</span>
     </div>
-    <div class="context-menu-item danger" onclick="menuAction('clear')">
+    <div class="context-menu-item" onclick="menuAction('clear')">
         پاک کردن
     </div>
 </div>
 
 <script>
-// ============ داده‌های پایه ============
-const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-const DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
-const DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
+/* ============================================= */
+/* JavaScript - توی پیام بعدی میاد               */
+/* ============================================= */
+</script>
 
-let currentMonth = 0;
-let isDark = true;
+</body>
+</html>
+<script>
+// ============ Supabase ============
+var SUPABASE_URL = 'https://moaofxlfantlijlkmcoi.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_mfrt-MTazEyu1UnkfhK7Dw_15WR3s5R';
 
-// ============ تبدیل عدد ============
-function toPersianNum(n) {
-    return String(n).split('').map(c => '۰۱۲۳۴۵۶۷۸۹'[c]).join('');
+var SB = null;
+try {
+    SB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch(e) {
+    console.error('Supabase error:', e);
 }
 
-// ============ نمایش تقویم ============
+// ============ Constants ============
+var MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+var DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
+var DAY_FULL = ['شنبه','یکشنبه','دوشنبه','سه شنبه','چهارشنبه','پنج شنبه','جمعه'];
+var DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
+var YEAR_START = new Date(2026, 2, 21);
+
+// ============ State ============
+var currentMonth = 0;
+var currentWeekStart = null;
+var currentDayDate = null;
+var isDark = true;
+var NOTES = {};
+var SETTINGS = {
+    sleepStart: '00:00',
+    sleepEnd: '06:40'
+};
+var activeContextSlot = null;
+var longPressTimer = null;
+
+// ============ Date Conversion ============
+function g2p(d) {
+    var gy = d.getFullYear();
+    var gm = d.getMonth() + 1;
+    var gd = d.getDate();
+    var gdi = [31,28,31,30,31,30,31,31,30,31,30,31];
+    if ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0) gdi[1] = 29;
+    
+    var dn = 365 * (gy - 1600) + Math.floor((gy - 1600 + 3) / 4) - Math.floor((gy - 1600 + 99) / 100) + Math.floor((gy - 1600 + 399) / 400);
+    for (var i = 0; i < gm - 1; i++) dn += gdi[i];
+    dn += gd - 1;
+    
+    var pn = dn - 79;
+    var pp = Math.floor(pn / 12053);
+    pn = pn % 12053;
+    var py = 979 + 33 * pp + 4 * Math.floor(pn / 1461);
+    pn = pn % 1461;
+    if (pn >= 366) {
+        py += Math.floor((pn - 1) / 365);
+        pn = (pn - 1) % 365;
+    }
+    
+    var pdi = [31,31,31,31,31,31,30,30,30,30,30,29];
+    var pm = 0;
+    while (pn >= pdi[pm] && pm < 11) {
+        pn -= pdi[pm];
+        pm++;
+    }
+    
+    return { y: py, m: pm + 1, d: pn + 1 };
+}
+
+function getDayOfWeek(d) {
+    return (d.getDay() + 1) % 7;
+}
+
+function pnum(n) {
+    var s = String(n);
+    var out = '';
+    for (var i = 0; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (c >= '0' && c <= '9') {
+            out += '۰۱۲۳۴۵۶۷۸۹'.charAt(parseInt(c));
+        } else {
+            out += c;
+        }
+    }
+    return out;
+}
+
+function pad2(n) {
+    return String(n).padStart(2, '0');
+}
+
+function dk(y, m, d) {
+    return y + '-' + pad2(m) + '-' + pad2(d);
+}
+
+function slotKey(dateKey, slotIdx) {
+    return dateKey + '-s' + slotIdx;
+}
+
+// ============ Month Helpers ============
+function getFirstDayOfMonth(m) {
+    var d = new Date(YEAR_START);
+    for (var i = 0; i < m; i++) d.setDate(d.getDate() + DAYS_IN_MONTH[i]);
+    return d;
+}
+
+function getToday() {
+    return g2p(new Date());
+}
+
+// ============ Slots ============
+function generateSlots() {
+    var slots = [];
+    var sleepStartMin = parseInt(SETTINGS.sleepStart.split(':')[0]) * 60 + parseInt(SETTINGS.sleepStart.split(':')[1]);
+    var sleepEndMin = parseInt(SETTINGS.sleepEnd.split(':')[0]) * 60 + parseInt(SETTINGS.sleepEnd.split(':')[1]);
+    
+    var slotIdx = 0;
+    for (var h = 0; h < 24; h++) {
+        for (var m = 0; m < 60; m += 15) {
+            var startStr = pad2(h) + ':' + pad2(m);
+            var totalMin = h * 60 + m;
+            
+            var isSleep = false;
+            if (sleepStartMin < sleepEndMin) {
+                isSleep = totalMin >= sleepStartMin && totalMin < sleepEndMin;
+            } else {
+                isSleep = totalMin >= sleepStartMin || totalMin < sleepEndMin;
+            }
+            
+            slots.push({
+                index: slotIdx,
+                hour: h,
+                minute: m,
+                start: startStr,
+                isSleep: isSleep
+            });
+            slotIdx++;
+        }
+    }
+    return slots;
+}
+
+function getSlotTime(startStr) {
+    var parts = startStr.split(':');
+    var h = parseInt(parts[0]);
+    var m = parseInt(parts[1]) + 15;
+    if (m === 60) { h++; m = 0; }
+    if (h === 24) h = 0;
+    return pad2(h) + ':' + pad2(m);
+}
+
+// ============ Local Storage ============
+function loadLocal() {
+    try {
+        NOTES = JSON.parse(localStorage.getItem('taghvim-notes') || '{}');
+    } catch(e) { NOTES = {}; }
+    
+    try {
+        var s = JSON.parse(localStorage.getItem('taghvim-settings') || '{}');
+        if (s.sleepStart) SETTINGS.sleepStart = s.sleepStart;
+        if (s.sleepEnd) SETTINGS.sleepEnd = s.sleepEnd;
+    } catch(e) {}
+}
+
+function saveLocal() {
+    localStorage.setItem('taghvim-notes', JSON.stringify(NOTES));
+    localStorage.setItem('taghvim-settings', JSON.stringify(SETTINGS));
+}
+
+// ============ Supabase ============
+async function loadCloud() {
+    if (!SB) return;
+    try {
+        var result = await SB.from('notes').select('*').eq('year', 1405);
+        if (result.data) {
+            result.data.forEach(function(r) {
+                NOTES[r.slot_key] = {
+                    title: r.title || '',
+                    description: r.description || '',
+                    hasCheck: r.has_check || false,
+                    checked: r.checked || false
+                };
+            });
+        }
+        saveLocal();
+    } catch(e) {
+        console.error('Load error:', e);
+    }
+}
+
+async function saveCloud(sKey, data) {
+    if (!SB) return;
+    try {
+        await SB.from('notes').delete().eq('slot_key', sKey);
+        await SB.from('notes').insert({
+            slot_key: sKey,
+            year: 1405,
+            title: data.title || '',
+            description: data.description || '',
+            has_check: data.hasCheck || false,
+            checked: data.checked || false,
+            updated_at: new Date().toISOString()
+        });
+    } catch(e) {
+        console.error('Save error:', e);
+    }
+}
+
+async function deleteCloud(sKey) {
+    if (!SB) return;
+    try {
+        await SB.from('notes').delete().eq('slot_key', sKey);
+    } catch(e) {}
+}
+
+// ============ Sync ============
+setInterval(async function() {
+    if (!SB) return;
+    try {
+        var result = await SB.from('notes').select('*').eq('year', 1405);
+        if (!result.data) return;
+        
+        var changed = false;
+        result.data.forEach(function(r) {
+            var old = NOTES[r.slot_key];
+            var newData = {
+                title: r.title || '',
+                description: r.description || '',
+                hasCheck: r.has_check || false,
+                checked: r.checked || false
+            };
+            if (!old || old.title !== newData.title || old.description !== newData.description || old.hasCheck !== newData.hasCheck || old.checked !== newData.checked) {
+                NOTES[r.slot_key] = newData;
+                changed = true;
+            }
+        });
+        
+        if (changed) {
+            saveLocal();
+            updateAllViews();
+        }
+    } catch(e) {}
+}, 3000);
+
+// ============ Today Info ============
+function calcTodayHours() {
+    var today = getToday();
+    var dateKey = dk(today.y, today.m, today.d);
+    var count = 0;
+    for (var i = 0; i < 96; i++) {
+        var n = NOTES[slotKey(dateKey, i)];
+        if (n && (n.title || n.description)) count++;
+    }
+    var hours = Math.floor(count * 15 / 60);
+    var mins = (count * 15) % 60;
+    
+    var result = '';
+    if (hours > 0) result += pnum(hours) + ' ساعت';
+    if (mins > 0) {
+        if (result) result += ' و ';
+        result += pnum(mins) + ' دقیقه';
+    }
+    if (!result) result = '۰ دقیقه';
+    return result;
+}
+
+function updateTodayInfo() {
+    document.getElementById('todaySummary').textContent = calcTodayHours();
+    var t = getToday();
+    document.getElementById('todayDate').textContent = pnum(t.y) + '/' + pad2(t.m) + '/' + pad2(t.d);
+}
+
+function hasNoteForDay(dateKey) {
+    for (var i = 0; i < 96; i++) {
+        var n = NOTES[slotKey(dateKey, i)];
+        if (n && (n.title || n.description)) return true;
+    }
+    return false;
+}
+
+// ============ Pending ============
+function countPending() {
+    var today = getToday();
+    var todayKey = dk(today.y, today.m, today.d);
+    var count = 0;
+    
+    Object.keys(NOTES).forEach(function(k) {
+        var n = NOTES[k];
+        if (n.hasCheck && !n.checked) {
+            var datePart = k.split('-s')[0];
+            if (datePart < todayKey) count++;
+        }
+    });
+    return count;
+}
+
+function updatePendingBadge() {
+    var count = countPending();
+    document.getElementById('pendingBadge').textContent = pnum(count);
+    document.getElementById('pendingBadge').style.display = count > 0 ? 'inline-block' : 'none';
+}
+
+// ============ Render Calendar ============
 function renderCalendar() {
-    const grid = document.getElementById('calendarGrid');
-    const title = document.getElementById('monthTitle');
+    var grid = document.getElementById('calendarGrid');
+    var title = document.getElementById('monthTitle');
     
     title.textContent = MONTHS[currentMonth] + ' ۱۴۰۵';
     
-    let html = '';
-    
-    // نام روزها
-    DAY_SHORT.forEach(d => {
-        html += `<div class="day-name-cell">${d}</div>`;
+    var html = '';
+    DAY_SHORT.forEach(function(d) {
+        html += '<div class="day-name-cell">' + d + '</div>';
     });
     
-    // فروردین ۱۴۰۵ از شنبه شروع میشه
-    const firstDayOffset = 0;
+    var firstDay = getFirstDayOfMonth(currentMonth);
+    var startDow = getDayOfWeek(firstDay);
+    var daysCount = DAYS_IN_MONTH[currentMonth];
+    var today = getToday();
     
-    for (let i = 0; i < firstDayOffset; i++) {
-        html += `<div class="day-cell empty"></div>`;
+    for (var i = 0; i < startDow; i++) {
+        html += '<div class="day-cell empty"></div>';
     }
     
-    const daysCount = DAYS_IN_MONTH[currentMonth];
-    for (let d = 1; d <= daysCount; d++) {
-        const dayOfWeek = (d + firstDayOffset - 1) % 7;
-        const isFriday = dayOfWeek === 6;
-        const isThursday = dayOfWeek === 5;
-        const isToday = (currentMonth === 0 && d === 1);
+    var cur = new Date(firstDay);
+    for (var d = 1; d <= daysCount; d++) {
+        var pd = g2p(cur);
+        var dow = getDayOfWeek(cur);
+        var dateKey = dk(pd.y, pd.m, pd.d);
+        var isToday = pd.y === today.y && pd.m === today.m && pd.d === today.d;
         
-        let cls = 'day-cell';
-        if (isFriday) cls += ' friday';
-        if (isThursday) cls += ' thursday';
+        var cls = 'day-cell';
+        if (dow === 6) cls += ' friday';
+        if (dow === 5) cls += ' thursday';
         if (isToday) cls += ' today';
+        if (hasNoteForDay(dateKey)) cls += ' has-note';
         
-        html += `<div class="${cls}" onclick="openDay(${d}, this)">
-            <span class="day-number">${toPersianNum(d)}</span>
-        </div>`;
+        var indicator = hasNoteForDay(dateKey) ? '<div class="day-indicator"></div>' : '';
+        
+        html += '<div class="' + cls + '" onclick="openDay(' + d + ', this)" data-m="' + currentMonth + '" data-d="' + d + '">' +
+                '<span class="day-number">' + pnum(d) + '</span>' +
+                indicator +
+                '</div>';
+        cur.setDate(cur.getDate() + 1);
     }
     
     grid.innerHTML = html;
@@ -857,66 +1416,468 @@ function nextMonth() {
     renderCalendar();
 }
 
-// ============ باز کردن روز ============
+// ============ Open Day ============
 function openDay(d, el) {
-    // انتخاب روز
-    document.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
+    document.querySelectorAll('.day-cell.selected').forEach(function(c) { c.classList.remove('selected'); });
+    if (el) el.classList.add('selected');
+    
+    var firstDay = getFirstDayOfMonth(currentMonth);
+    var targetDate = new Date(firstDay.getTime() + (d - 1) * 86400000);
+    var pd = g2p(targetDate);
+    var dow = getDayOfWeek(targetDate);
+    var dateKey = dk(pd.y, pd.m, pd.d);
     
     document.getElementById('modalTitle').textContent = 
-        toPersianNum(1405) + '/' + String(currentMonth+1).padStart(2,'0') + '/' + String(d).padStart(2,'0') + ' - ' + MONTHS[currentMonth];
+        pnum(pd.y) + '/' + pad2(pd.m) + '/' + pad2(pd.d) + ' - ' + DAY_FULL[dow];
     
-    const container = document.getElementById('slotsContainer');
-    let html = '';
-    
-    // فقط ۰۶:۴۰ تا ۲۳:۴۵ (ساعت خواب مخفی)
-    for (let h = 6; h < 24; h++) {
-        for (let m = 0; m < 60; m += 15) {
-            if (h === 6 && m < 40) continue;
-            
-            const start = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
-            let eh = h, em = m + 15;
-            if (em === 60) { eh++; em = 0; }
-            if (eh === 24) eh = 0;
-            const end = String(eh).padStart(2,'0') + ':' + String(em).padStart(2,'0');
-            
-            html += `<div class="slot-row">
-                <div class="slot-time">${start} - ${end}</div>
-                <input class="slot-input" placeholder="عنوان">
-                <input class="slot-input" placeholder="توضیحات">
-            </div>`;
-        }
-    }
-    
-    container.innerHTML = html;
+    renderSlots(document.getElementById('slotsContainer'), dateKey);
     document.getElementById('dayModal').classList.add('active');
 }
 
+// ============ Render Slots ============
+function renderSlots(container, dateKey) {
+    var slots = generateSlots();
+    var html = '';
+    
+    slots.forEach(function(s) {
+        var sKey = slotKey(dateKey, s.index);
+        var note = NOTES[sKey] || {};
+        var endTime = getSlotTime(s.start);
+        
+        if (s.isSleep) {
+            html += '<div class="slot-row sleep" data-slot="' + sKey + '">' +
+                    '<div class="slot-time">' + s.start + ' - ' + endTime + '</div>' +
+                    '<div style="grid-column: span 2; display:flex; align-items:center; color:var(--text-muted); font-size:0.8em;">خواب</div>' +
+                    '</div>';
+        } else {
+            var rowCls = 'slot-row';
+            if (note.title || note.description) rowCls += ' has-note';
+            if (note.hasCheck) rowCls += ' has-check';
+            if (note.checked) rowCls += ' done';
+            
+            html += '<div class="' + rowCls + '" data-slot="' + sKey + '">' +
+                    '<div class="slot-time">' + s.start + ' - ' + endTime + '</div>';
+            
+            if (note.hasCheck) {
+                html += '<div class="slot-check' + (note.checked ? ' checked' : '') + '" onclick="toggleCheck(\'' + sKey + '\')"></div>';
+            }
+            
+            html += '<input class="slot-input" placeholder="عنوان" value="' + escapeHtml(note.title || '') + '" data-field="title" oninput="updateNote(\'' + sKey + '\', \'title\', this.value)">' +
+                    '<input class="slot-input" placeholder="توضیحات" value="' + escapeHtml(note.description || '') + '" data-field="description" oninput="updateNote(\'' + sKey + '\', \'description\', this.value)">' +
+                    '</div>';
+        }
+    });
+    
+    container.innerHTML = html;
+    
+    container.querySelectorAll('.slot-row:not(.sleep)').forEach(function(row) {
+        var slotKeyVal = row.dataset.slot;
+        
+        row.addEventListener('touchstart', function(e) {
+            longPressTimer = setTimeout(function() {
+                showContextMenu(e.touches[0].clientX, e.touches[0].clientY, slotKeyVal);
+            }, 600);
+        }, { passive: true });
+        
+        row.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
+        row.addEventListener('touchmove', function() { clearTimeout(longPressTimer); });
+        
+        row.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showContextMenu(e.clientX, e.clientY, slotKeyVal);
+        });
+    });
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============ Update Note ============
+function updateNote(sKey, field, value) {
+    if (!NOTES[sKey]) NOTES[sKey] = { title: '', description: '', hasCheck: false, checked: false };
+    NOTES[sKey][field] = value;
+    
+    var row = document.querySelector('[data-slot="' + sKey + '"]');
+    if (row) {
+        if (NOTES[sKey].title || NOTES[sKey].description) row.classList.add('has-note');
+        else row.classList.remove('has-note');
+    }
+    
+    saveLocal();
+    clearTimeout(window._saveT);
+    window._saveT = setTimeout(function() {
+        saveCloud(sKey, NOTES[sKey]);
+        updateTodayInfo();
+        updatePendingBadge();
+    }, 500);
+}
+
+// ============ Toggle Check ============
+function toggleCheck(sKey) {
+    if (!NOTES[sKey]) return;
+    NOTES[sKey].checked = !NOTES[sKey].checked;
+    
+    var row = document.querySelector('[data-slot="' + sKey + '"]');
+    if (row) {
+        var check = row.querySelector('.slot-check');
+        if (check) {
+            check.classList.toggle('checked', NOTES[sKey].checked);
+        }
+        row.classList.toggle('done', NOTES[sKey].checked);
+    }
+    
+    saveLocal();
+    saveCloud(sKey, NOTES[sKey]);
+    updatePendingBadge();
+}
+
+// ============ Context Menu ============
+function showContextMenu(x, y, sKey) {
+    activeContextSlot = sKey;
+    var menu = document.getElementById('contextMenu');
+    var note = NOTES[sKey] || {};
+    
+    document.getElementById('menuToggleText').textContent = 
+        note.hasCheck ? 'غیرفعال کردن تیک' : 'فعال کردن تیک';
+    
+    menu.style.left = Math.min(x, window.innerWidth - 220) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - 150) + 'px';
+    menu.classList.add('active');
+}
+
+function menuAction(action) {
+    document.getElementById('contextMenu').classList.remove('active');
+    if (!activeContextSlot) return;
+    
+    var sKey = activeContextSlot;
+    var rows = document.querySelectorAll('#slotsContainer .slot-row');
+    var dateKey = null;
+    if (rows.length > 0) {
+        dateKey = rows[0].dataset.slot.split('-s')[0];
+    }
+    
+    if (action === 'toggleCheck') {
+        if (!NOTES[sKey]) NOTES[sKey] = { title: '', description: '', hasCheck: false, checked: false };
+        NOTES[sKey].hasCheck = !NOTES[sKey].hasCheck;
+        if (!NOTES[sKey].hasCheck) NOTES[sKey].checked = false;
+        saveLocal();
+        saveCloud(sKey, NOTES[sKey]);
+        
+        if (dateKey) {
+            renderSlots(document.getElementById('slotsContainer'), dateKey);
+        }
+        updatePendingBadge();
+    }
+    
+    if (action === 'clear') {
+        delete NOTES[sKey];
+        saveLocal();
+        deleteCloud(sKey);
+        
+        if (dateKey) {
+            renderSlots(document.getElementById('slotsContainer'), dateKey);
+        }
+        updateTodayInfo();
+        updatePendingBadge();
+    }
+    
+    activeContextSlot = null;
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.context-menu')) {
+        document.getElementById('contextMenu').classList.remove('active');
+    }
+});
+
+// ============ Close Modals ============
 function closeDayModal() {
     document.getElementById('dayModal').classList.remove('active');
 }
 
 function closeModal(e) {
-    if (e.target.id === 'dayModal') {
-        closeDayModal();
+    if (e.target.id === 'dayModal') closeDayModal();
+}
+
+function closeSettingsModal(e) {
+    if (!e || e.target.id === 'settingsModal') {
+        document.getElementById('settingsModal').classList.remove('active');
     }
 }
 
-// ============ تب‌ها ============
+function closePendingModal(e) {
+    if (!e || e.target.id === 'pendingModal') {
+        document.getElementById('pendingModal').classList.remove('active');
+    }
+}
+
+// ============ Switch View ============
 function switchView(v, btn) {
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
     
-    // فعلاً فقط ماهانه
+    document.getElementById('monthView').style.display = 'none';
+    document.getElementById('weekView').style.display = 'none';
+    document.getElementById('dayView').style.display = 'none';
+    
     if (v === 'month') {
-        document.querySelector('.calendar-card').style.display = 'block';
-    } else {
-        alert('نمای ' + (v === 'week' ? 'هفتگی' : 'روزانه') + ' توی تیکه بعدی اضافه میشه');
-        document.querySelector('.view-tab.active').classList.remove('active');
-        document.querySelector('.view-tab').classList.add('active');
+        document.getElementById('monthView').style.display = 'block';
+    } else if (v === 'week') {
+        document.getElementById('weekView').style.display = 'block';
+        initWeekView();
+    } else if (v === 'day') {
+        document.getElementById('dayView').style.display = 'block';
+        initDayView();
     }
 }
 
-// ============ تم ============
+// ============ Week View ============
+function initWeekView() {
+    if (!currentWeekStart) {
+        var today = getToday();
+        var firstDay = getFirstDayOfMonth(today.m - 1);
+        var dayInMonth = today.d - 1;
+        var todayDate = new Date(firstDay.getTime() + dayInMonth * 86400000);
+        var dow = getDayOfWeek(todayDate);
+        currentWeekStart = new Date(todayDate.getTime() - dow * 86400000);
+    }
+    renderWeek();
+}
+
+function renderWeek() {
+    var container = document.getElementById('weekContainer');
+    var today = getToday();
+    var slots = generateSlots();
+    
+    var html = '<div class="week-header">';
+    html += '<div class="week-header-cell"></div>';
+    
+    var weekDates = [];
+    for (var i = 0; i < 7; i++) {
+        var d = new Date(currentWeekStart.getTime() + i * 86400000);
+        weekDates.push(d);
+        var pd = g2p(d);
+        var isToday = pd.y === today.y && pd.m === today.m && pd.d === today.d;
+        html += '<div class="week-header-cell' + (isToday ? ' today' : '') + '">' +
+                '<span class="wd">' + DAY_SHORT[i] + '</span>' +
+                '<span class="dn">' + pnum(pd.d) + '</span>' +
+                '</div>';
+    }
+    html += '</div>';
+    
+    html += '<div class="week-body">';
+    html += '<div class="week-time-col">';
+    slots.forEach(function(s) {
+        if (s.isSleep) return;
+        html += '<div class="week-time-label">' + s.start + '</div>';
+    });
+    html += '</div>';
+    
+    weekDates.forEach(function(d) {
+        var pd = g2p(d);
+        var dateKey = dk(pd.y, pd.m, pd.d);
+        html += '<div class="week-day-col">';
+        
+        slots.forEach(function(s) {
+            if (s.isSleep) return;
+            var sKey = slotKey(dateKey, s.index);
+            var note = NOTES[sKey] || {};
+            var cls = 'week-slot';
+            if (note.title || note.description) cls += ' has-note';
+            if (note.checked) cls += ' done';
+            
+            var title = note.title ? escapeHtml(note.title) : '';
+            html += '<div class="' + cls + '" onclick="openWeekSlot(\'' + sKey + '\')" title="' + s.start + ' - ' + title + '">' + (title || '') + '</div>';
+        });
+        
+        html += '</div>';
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    var firstPd = g2p(weekDates[0]);
+    var lastPd = g2p(weekDates[6]);
+    document.getElementById('weekTitle').textContent = 
+        pnum(firstPd.d) + ' ' + MONTHS[firstPd.m - 1] + ' تا ' + pnum(lastPd.d) + ' ' + MONTHS[lastPd.m - 1];
+}
+
+function openWeekSlot(sKey) {
+    var dateKey = sKey.split('-s')[0];
+    var parts = dateKey.split('-');
+    var y = parseInt(parts[0]);
+    var m = parseInt(parts[1]);
+    var d = parseInt(parts[2]);
+    
+    var firstDay = getFirstDayOfMonth(m - 1);
+    var targetDate = new Date(firstDay.getTime() + (d - 1) * 86400000);
+    var dow = getDayOfWeek(targetDate);
+    
+    document.getElementById('modalTitle').textContent = 
+        pnum(y) + '/' + pad2(m) + '/' + pad2(d) + ' - ' + DAY_FULL[dow];
+    
+    renderSlots(document.getElementById('slotsContainer'), dateKey);
+    document.getElementById('dayModal').classList.add('active');
+}
+
+function prevWeek() {
+    currentWeekStart = new Date(currentWeekStart.getTime() - 7 * 86400000);
+    renderWeek();
+}
+
+function nextWeek() {
+    currentWeekStart = new Date(currentWeekStart.getTime() + 7 * 86400000);
+    renderWeek();
+}
+
+// ============ Day View ============
+function initDayView() {
+    if (!currentDayDate) {
+        currentDayDate = new Date();
+    }
+    renderDayView();
+}
+
+function renderDayView() {
+    var pd = g2p(currentDayDate);
+    var dow = getDayOfWeek(currentDayDate);
+    var dateKey = dk(pd.y, pd.m, pd.d);
+    
+    document.getElementById('dayTitle').textContent = 
+        pnum(pd.y) + '/' + pad2(pd.m) + '/' + pad2(pd.d) + ' - ' + DAY_FULL[dow];
+    
+    renderSlots(document.getElementById('dayViewSlots'), dateKey);
+}
+
+function prevDay() {
+    currentDayDate = new Date(currentDayDate.getTime() - 86400000);
+    renderDayView();
+}
+
+function nextDay() {
+    currentDayDate = new Date(currentDayDate.getTime() + 86400000);
+    renderDayView();
+}
+
+// ============ Settings ============
+function openSettings() {
+    document.getElementById('sleepStart').value = SETTINGS.sleepStart;
+    document.getElementById('sleepEnd').value = SETTINGS.sleepEnd;
+    document.getElementById('settingsModal').classList.add('active');
+}
+
+function saveSettings() {
+    SETTINGS.sleepStart = document.getElementById('sleepStart').value || '00:00';
+    SETTINGS.sleepEnd = document.getElementById('sleepEnd').value || '06:40';
+    saveLocal();
+    closeSettingsModal();
+    updateAllViews();
+}
+
+// ============ Pending List ============
+function openPending() {
+    var list = document.getElementById('pendingList');
+    var today = getToday();
+    var todayKey = dk(today.y, today.m, today.d);
+    var items = [];
+    
+    Object.keys(NOTES).forEach(function(k) {
+        var n = NOTES[k];
+        if (n.hasCheck && !n.checked) {
+            var datePart = k.split('-s')[0];
+            if (datePart < todayKey) {
+                items.push({ key: k, title: n.title, description: n.description, datePart: datePart });
+            }
+        }
+    });
+    
+    items.sort(function(a, b) { return a.datePart.localeCompare(b.datePart); });
+    
+    if (items.length === 0) {
+        list.innerHTML = '<div class="empty-state">کار عقب افتاده ای نداری</div>';
+    } else {
+        var html = '';
+        var allSlots = generateSlots();
+        items.forEach(function(item) {
+            var parts = item.datePart.split('-');
+            var slotIdx = parseInt(item.key.split('-s')[1]);
+            var slot = allSlots[slotIdx];
+            var timeStr = slot ? slot.start : '';
+            
+            html += '<div class="pending-item">' +
+                    '<div class="pi-info">' +
+                    '<div class="pi-title">' + escapeHtml(item.title || 'بدون عنوان') + '</div>' +
+                    '<div class="pi-meta">' + pnum(parts[2]) + ' ' + MONTHS[parseInt(parts[1]) - 1] + ' - ساعت ' + timeStr + '</div>' +
+                    '</div>' +
+                    '<div class="pi-actions">' +
+                    '<button class="done" onclick="pendingDone(\'' + item.key + '\')" title="انجام شد">✓</button>' +
+                    '<button class="del" onclick="pendingDelete(\'' + item.key + '\')" title="حذف">✕</button>' +
+                    '</div>' +
+                    '</div>';
+        });
+        list.innerHTML = html;
+    }
+    
+    document.getElementById('pendingModal').classList.add('active');
+}
+
+function pendingDone(sKey) {
+    if (!NOTES[sKey]) return;
+    NOTES[sKey].checked = true;
+    saveLocal();
+    saveCloud(sKey, NOTES[sKey]);
+    updatePendingBadge();
+    openPending();
+}
+
+function pendingDelete(sKey) {
+    delete NOTES[sKey];
+    saveLocal();
+    deleteCloud(sKey);
+    updatePendingBadge();
+    updateTodayInfo();
+    openPending();
+}
+
+// ============ Theme ============
 function toggleTheme() {
-    isDark = !isDark
+    isDark = !isDark;
+    document.body.classList.toggle('light', !isDark);
+    localStorage.setItem('taghvim-theme', isDark ? 'dark' : 'light');
+}
+
+// ============ Update All ============
+function updateAllViews() {
+    renderCalendar();
+    if (document.getElementById('weekView').style.display === 'block') {
+        renderWeek();
+    }
+    if (document.getElementById('dayView').style.display === 'block') {
+        renderDayView();
+    }
+    updateTodayInfo();
+    updatePendingBadge();
+}
+
+// ============ Init ============
+async function init() {
+    var savedTheme = localStorage.getItem('taghvim-theme');
+    if (savedTheme === 'light') {
+        isDark = false;
+        document.body.classList.add('light');
+    }
+    
+    loadLocal();
+    renderCalendar();
+    updateTodayInfo();
+    updatePendingBadge();
+    
+    await loadCloud();
+    updateAllViews();
+    
+    console.log('Taghvim 1405 ready');
+}
+
+init();
+</script>
