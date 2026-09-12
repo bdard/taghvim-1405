@@ -4,60 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تقویم ۱۴۰۵</title>
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="تقویم ۱۴۰۵">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f172a'/><text x='50' y='65' font-size='50' fill='white' text-anchor='middle' font-family='serif'>۱۴۰۵</text></svg>">
     <link rel="manifest" href="manifest.json">
     
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     
     <style>
-        /* ============ متغیرهای رنگی ============ */
         :root {
-            /* پس‌زمینه گرادیانت */
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            /* رنگ‌های اصلی - خاکستری و سرمه‌ای */
+            --bg-primary: #1a1f2e;
+            --bg-secondary: #232838;
+            --bg-tertiary: #2d3345;
+            --bg-elevated: #363d52;
             
-            /* شیشه */
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-bg-strong: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
-            --glass-blur: blur(20px);
+            /* شیشه مات */
+            --glass-bg: rgba(45, 51, 69, 0.7);
+            --glass-bg-strong: rgba(54, 61, 82, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             
             /* متن */
-            --text: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.75);
-            --text-muted: rgba(255, 255, 255, 0.5);
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ba3b8;
+            --text-muted: #6b7285;
             
             /* رنگ‌های تاکیدی */
-            --accent: #ffffff;
-            --today: rgba(255, 255, 255, 0.35);
-            --today-border: #ffffff;
-            --friday: #ffb3b3;
-            --thursday: #b3d9ff;
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --danger: #f87171;
+            --accent-primary: #4a6fa5;
+            --accent-secondary: #5d82b8;
+            --accent-hover: #6089c7;
+            --today-bg: #4a6fa5;
+            --today-border: #5d82b8;
+            --friday: #c47a7a;
+            --thursday: #7a9bc4;
+            --success: #6ba574;
+            --warning: #c4a55d;
+            --danger: #b85c5c;
             
-            /* انیمیشن */
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius: 20px;
-            --radius-sm: 14px;
+            /* فاصله و انیمیشن */
+            --transition: 0.2s ease;
+            --radius: 8px;
+            --radius-sm: 6px;
+            --radius-lg: 12px;
         }
         
-        /* حالت تیره */
-        body.dark {
-            --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-bg-strong: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        /* حالت روشن (اختیاری) */
+        body.light {
+            --bg-primary: #e8eaf0;
+            --bg-secondary: #dcdfe8;
+            --bg-tertiary: #cdd2dd;
+            --bg-elevated: #ffffff;
+            --glass-bg: rgba(220, 223, 232, 0.8);
+            --glass-bg-strong: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --text-primary: #1a1f2e;
+            --text-secondary: #4a5468;
+            --text-muted: #7a8499;
+            --accent-primary: #3a5a8a;
+            --today-bg: #4a6fa5;
+            --today-border: #3a5a8a;
         }
         
-        /* ============ پایه ============ */
         * {
             margin: 0;
             padding: 0;
@@ -72,42 +84,27 @@
         
         body {
             font-family: 'Vazirmatn', Tahoma, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 12px;
-            transition: background var(--transition);
+            padding: 16px;
+            transition: background var(--transition), color var(--transition);
             position: relative;
         }
         
-        /* حباب‌های تزئینی پس‌زمینه */
-        body::before, body::after {
+        /* الگوی نقطه‌ای پس‌زمینه */
+        body::before {
             content: '';
             position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.5;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
             pointer-events: none;
             z-index: 0;
         }
-        body::before {
-            width: 400px;
-            height: 400px;
-            background: #f093fb;
-            top: -100px;
-            right: -100px;
-        }
-        body::after {
-            width: 500px;
-            height: 500px;
-            background: #4facfe;
-            bottom: -150px;
-            left: -150px;
-        }
         
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: auto;
             position: relative;
             z-index: 1;
@@ -116,31 +113,38 @@
         /* ============ هدر ============ */
         .header {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            padding: 14px 18px;
-            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 20px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             position: sticky;
-            top: 12px;
+            top: 16px;
             z-index: 100;
             margin-bottom: 16px;
-            transition: all var(--transition);
         }
         
         .header h1 {
-            font-size: 1.3em;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 1.15em;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: var(--text-primary);
+        }
+        .header h1::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--accent-primary);
+            margin-left: 10px;
+            vertical-align: middle;
+            border-radius: 2px;
         }
         
         .header-actions {
@@ -150,55 +154,63 @@
             align-items: center;
         }
         
-        /* دکمه‌های شیشه‌ای */
-        .glass-btn {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+        /* دکمه‌های گوشه‌دار */
+        .btn {
+            background: var(--bg-tertiary);
             border: 1px solid var(--glass-border);
-            color: var(--text);
-            padding: 9px 14px;
-            border-radius: 14px;
+            color: var(--text-secondary);
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-family: inherit;
             font-size: 0.85em;
-            font-weight: 600;
+            font-weight: 500;
             transition: all var(--transition);
             position: relative;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             white-space: nowrap;
+            letter-spacing: 0.2px;
         }
-        .glass-btn:hover {
-            background: var(--glass-bg-strong);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        .btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
         }
-        .glass-btn:active {
-            transform: scale(0.96);
+        .btn:active {
+            transform: translateY(1px);
         }
         
-        /* Badge تعداد */
+        /* آیکون ساده SVG */
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            opacity: 0.8;
+        }
+        
+        /* Badge */
         .badge {
             background: var(--danger);
             color: white;
             font-size: 0.7em;
             padding: 2px 7px;
             border-radius: 10px;
-            font-weight: 800;
+            font-weight: 700;
             min-width: 18px;
             text-align: center;
+            line-height: 1.4;
         }
         
         /* ============ نوار اطلاعات ============ */
         .info-bar {
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             padding: 14px 20px;
             margin-bottom: 16px;
             display: flex;
@@ -207,68 +219,73 @@
             gap: 12px;
             flex-wrap: wrap;
             font-size: 0.9em;
-            font-weight: 600;
         }
-        .info-bar .info-main {
+        .info-main {
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 500;
+            color: var(--text-primary);
         }
-        .info-bar .info-icon {
-            font-size: 1.5em;
+        .info-main .label {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
-        .info-bar .info-sub {
+        .info-date {
             color: var(--text-secondary);
             font-size: 0.85em;
-            font-weight: 500;
+            font-variant-numeric: tabular-nums;
         }
         
         /* ============ تب‌های نما ============ */
         .view-tabs {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
-            border-radius: var(--radius);
-            padding: 6px;
+            border-radius: var(--radius-lg);
+            padding: 4px;
             margin-bottom: 16px;
         }
         .view-tab {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
-            padding: 10px 16px;
-            border-radius: 14px;
+            color: var(--text-muted);
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.9em;
+            font-size: 0.88em;
             font-weight: 600;
             transition: all var(--transition);
             white-space: nowrap;
+            letter-spacing: 0.3px;
         }
         .view-tab:hover {
-            color: var(--text);
-            background: var(--glass-bg);
+            color: var(--text-primary);
         }
         .view-tab.active {
-            background: var(--glass-bg-strong);
-            color: var(--text);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(74, 111, 165, 0.3);
         }
         
         /* ============ کارت تقویم ============ */
         .calendar-card {
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
-            border-radius: var(--radius);
-            padding: 20px;
+            border-radius: var(--radius-lg);
+            padding: 24px;
             margin-bottom: 16px;
         }
         
@@ -276,53 +293,60 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--glass-border);
         }
         .month-nav h2 {
-            font-size: 1.4em;
-            font-weight: 800;
+            font-size: 1.3em;
+            font-weight: 700;
             flex: 1;
             text-align: center;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
         }
-        .month-nav .nav-btn {
-            background: var(--glass-bg);
+        .nav-btn {
+            background: transparent;
             border: 1px solid var(--glass-border);
-            color: var(--text);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             transition: all var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: inherit;
         }
-        .month-nav .nav-btn:hover {
-            background: var(--glass-bg-strong);
-            transform: scale(1.1);
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
         }
         
         /* ============ جدول تقویم ============ */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
         
         .day-name-cell {
             text-align: center;
-            font-weight: 700;
-            color: var(--text-secondary);
-            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75em;
             padding: 10px 4px;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         
         .day-cell {
             aspect-ratio: 1;
-            background: var(--glass-bg);
+            background: var(--bg-secondary);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-sm);
             cursor: pointer;
@@ -330,79 +354,79 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 1em;
             transition: all var(--transition);
             position: relative;
             user-select: none;
             padding: 4px;
+            color: var(--text-primary);
         }
         .day-cell:hover {
-            background: var(--glass-bg-strong);
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            z-index: 2;
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
         }
         .day-cell:active {
             transform: scale(0.97);
         }
         .day-cell.empty {
             background: transparent;
-            border: none;
+            border: 1px dashed rgba(255, 255, 255, 0.05);
             cursor: default;
         }
         .day-cell.empty:hover {
             transform: none;
-            box-shadow: none;
+            border-color: rgba(255, 255, 255, 0.05);
         }
         .day-cell.today {
-            background: var(--today);
-            border: 2px solid var(--today-border);
-            font-weight: 800;
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+            background: var(--today-bg);
+            border-color: var(--today-border);
+            font-weight: 700;
+            color: white;
         }
         .day-cell.selected {
-            background: var(--glass-bg-strong);
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+            background: var(--accent-primary);
+            border-color: var(--accent-secondary);
+            color: white;
         }
-        .day-cell.friday {
+        .day-cell.friday:not(.today):not(.selected) {
             color: var(--friday);
         }
-        .day-cell.thursday {
+        .day-cell.thursday:not(.today):not(.selected) {
             color: var(--thursday);
         }
         
         .day-number {
             font-size: 1em;
             line-height: 1;
+            font-variant-numeric: tabular-nums;
         }
         
         .day-indicator {
             position: absolute;
-            bottom: 5px;
+            bottom: 6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 6px;
-            height: 6px;
+            width: 4px;
+            height: 4px;
             border-radius: 50%;
             background: var(--success);
-            box-shadow: 0 0 8px var(--success);
         }
         
-        /* ============ پنجره شناور (Modal) ============ */
+        /* ============ پنجره شناور ============ */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease;
         }
         .modal-overlay.active {
             display: flex;
@@ -414,29 +438,27 @@
         }
         
         .modal {
-            background: var(--glass-bg-strong);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            background: var(--bg-secondary);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 700px;
+            max-width: 720px;
             max-height: 90vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(40px) scale(0.95);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
         
@@ -447,37 +469,42 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            background: var(--bg-tertiary);
         }
         .modal-header h3 {
-            font-size: 1.1em;
-            font-weight: 800;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
         }
         .modal-close {
-            background: var(--glass-bg);
+            background: transparent;
             border: 1px solid var(--glass-border);
-            color: var(--text);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            color: var(--text-secondary);
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 1em;
+            font-size: 0.9em;
             transition: all var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: inherit;
         }
         .modal-close:hover {
             background: var(--danger);
-            transform: rotate(90deg);
+            color: white;
+            border-color: var(--danger);
         }
         
         .modal-body {
             padding: 18px 22px;
             overflow-y: auto;
             flex: 1;
+            background: var(--bg-secondary);
         }
         
-        /* ============ اسکرول‌بار شیشه‌ای ============ */
         .modal-body::-webkit-scrollbar,
         .slots-container::-webkit-scrollbar {
             width: 8px;
@@ -488,19 +515,19 @@
         }
         .modal-body::-webkit-scrollbar-thumb,
         .slots-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg-elevated);
             border-radius: 10px;
         }
         .modal-body::-webkit-scrollbar-thumb:hover,
         .slots-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+            background: var(--accent-primary);
         }
         
         /* ============ بازه‌های زمانی ============ */
         .slots-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             max-height: 60vh;
             overflow-y: auto;
             padding-right: 4px;
@@ -509,44 +536,41 @@
         .slot-row {
             display: grid;
             grid-template-columns: 110px 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
             align-items: stretch;
-            background: var(--glass-bg);
+            background: var(--bg-tertiary);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-sm);
-            padding: 8px;
+            padding: 6px;
             transition: all var(--transition);
-            position: relative;
         }
         .slot-row:hover {
-            background: var(--glass-bg-strong);
-            transform: translateX(-3px);
+            border-color: var(--accent-primary);
         }
         .slot-row.has-note {
-            border-color: rgba(74, 222, 128, 0.5);
+            border-right: 3px solid var(--success);
         }
         
         .slot-time {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.8em;
-            font-weight: 700;
-            color: var(--text);
-            background: var(--glass-bg);
-            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
             padding: 6px 4px;
-            letter-spacing: 0.3px;
-            line-height: 1.4;
+            letter-spacing: 0.5px;
+            font-variant-numeric: tabular-nums;
         }
         
         .slot-input {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg-secondary);
             border: 1px solid var(--glass-border);
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             padding: 8px 10px;
-            color: var(--text);
+            color: var(--text-primary);
             font-family: inherit;
             font-size: 0.85em;
             transition: all var(--transition);
@@ -557,25 +581,22 @@
         }
         .slot-input:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            background: var(--bg-primary);
+            border-color: var(--accent-primary);
         }
         
         /* ============ منوی Long Press ============ */
         .context-menu {
             position: fixed;
-            background: var(--glass-bg-strong);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            background: var(--bg-elevated);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-sm);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            padding: 6px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 4px;
             z-index: 2000;
             display: none;
             min-width: 180px;
-            animation: menuPop 0.2s ease;
+            animation: menuPop 0.15s ease;
         }
         .context-menu.active {
             display: block;
@@ -584,7 +605,7 @@
         @keyframes menuPop {
             from {
                 opacity: 0;
-                transform: scale(0.9);
+                transform: scale(0.95);
             }
             to {
                 opacity: 1;
@@ -597,18 +618,22 @@
             align-items: center;
             gap: 10px;
             padding: 10px 14px;
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
+            font-size: 0.85em;
+            font-weight: 500;
             transition: all var(--transition);
-            color: var(--text);
+            color: var(--text-primary);
         }
         .context-menu-item:hover {
-            background: var(--glass-bg);
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
         }
         .context-menu-item.danger {
             color: var(--danger);
+        }
+        .context-menu-item.danger:hover {
+            background: rgba(184, 92, 92, 0.15);
         }
         
         /* ============ ریسپانسیو ============ */
@@ -617,14 +642,17 @@
                 padding: 8px;
             }
             .header {
-                padding: 12px;
+                padding: 12px 14px;
                 top: 8px;
             }
             .header h1 {
-                font-size: 1em;
+                font-size: 0.95em;
             }
-            .glass-btn {
-                padding: 8px 10px;
+            .header h1::before {
+                height: 16px;
+            }
+            .btn {
+                padding: 8px 12px;
                 font-size: 0.75em;
             }
             .info-bar {
@@ -635,18 +663,22 @@
                 padding: 14px;
             }
             .calendar-grid {
-                gap: 4px;
+                gap: 3px;
             }
             .day-cell {
                 font-size: 0.85em;
-                border-radius: 10px;
+                border-radius: 4px;
+            }
+            .day-name-cell {
+                font-size: 0.65em;
+                padding: 6px 2px;
             }
             .month-nav h2 {
-                font-size: 1.1em;
+                font-size: 1em;
             }
             .month-nav .nav-btn {
-                width: 36px;
-                height: 36px;
+                width: 34px;
+                height: 34px;
             }
             .modal {
                 max-height: 95vh;
@@ -665,15 +697,15 @@
             }
         }
         
-        /* ============ انیمیشن‌های ورود ============ */
+        /* ============ انیمیشن ورود ============ */
         .fade-in-up {
-            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
@@ -688,16 +720,18 @@
     
     <!-- ============ هدر ============ -->
     <header class="header fade-in-up">
-        <h1>📅 تقویم ۱۴۰۵</h1>
+        <h1>تقویم ۱۴۰۵</h1>
         <div class="header-actions">
-            <button class="glass-btn" onclick="openPending()" title="کارهای عقب‌افتاده">
-                ⏳ <span class="badge" id="pendingBadge">۰</span>
+            <button class="btn" onclick="openPending()" title="کارهای عقب‌افتاده">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                عقب‌افتاده
+                <span class="badge" id="pendingBadge">۰</span>
             </button>
-            <button class="glass-btn" onclick="openSettings()" title="تنظیمات">
-                ⚙️
+            <button class="btn" onclick="openSettings()" title="تنظیمات">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
             </button>
-            <button class="glass-btn" onclick="toggleTheme()" title="تغییر تم">
-                🌓
+            <button class="btn" onclick="toggleTheme()" title="تغییر تم">
+                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
             </button>
         </div>
     </header>
@@ -705,25 +739,25 @@
     <!-- ============ نوار اطلاعات ============ -->
     <div class="info-bar fade-in-up">
         <div class="info-main">
-            <span class="info-icon">📊</span>
-            <span id="todaySummary">امروز ۰ ساعت برنامه داری</span>
+            <span class="label">برنامه امروز</span>
+            <span id="todaySummary">۰ ساعت</span>
         </div>
-        <div class="info-sub" id="todayDate">۱۴۰۵/۰۱/۰۱</div>
+        <div class="info-date" id="todayDate">۱۴۰۵/۰۱/۰۱</div>
     </div>
     
     <!-- ============ تب‌های نما ============ -->
     <div class="view-tabs fade-in-up">
-        <button class="view-tab active" onclick="switchView('month')">📅 ماهانه</button>
-        <button class="view-tab" onclick="switchView('week')">📆 هفتگی</button>
-        <button class="view-tab" onclick="switchView('day')">📋 روزانه</button>
+        <button class="view-tab active" onclick="switchView('month', this)">ماهانه</button>
+        <button class="view-tab" onclick="switchView('week', this)">هفتگی</button>
+        <button class="view-tab" onclick="switchView('day', this)">روزانه</button>
     </div>
     
     <!-- ============ کارت تقویم ============ -->
     <div class="calendar-card fade-in-up">
         <div class="month-nav">
-            <button class="nav-btn" onclick="prevMonth()">◀</button>
+            <button class="nav-btn" onclick="prevMonth()">‹</button>
             <h2 id="monthTitle">فروردین ۱۴۰۵</h2>
-            <button class="nav-btn" onclick="nextMonth()">▶</button>
+            <button class="nav-btn" onclick="nextMonth()">›</button>
         </div>
         
         <div class="calendar-grid" id="calendarGrid">
@@ -737,7 +771,7 @@
 <div class="modal-overlay" id="dayModal" onclick="closeModal(event)">
     <div class="modal" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <h3 id="modalTitle">📅 ۱۴۰۵/۰۱/۰۱ - شنبه</h3>
+            <h3 id="modalTitle">۱۴۰۵/۰۱/۰۱ - شنبه</h3>
             <button class="modal-close" onclick="closeDayModal()">✕</button>
         </div>
         <div class="modal-body">
@@ -751,25 +785,28 @@
 <!-- ============ منوی Long Press ============ -->
 <div class="context-menu" id="contextMenu">
     <div class="context-menu-item" onclick="menuAction('toggleCheck')">
-        ✅ <span id="menuToggleText">فعال کردن تیک</span>
+        <span id="menuToggleText">فعال کردن تیک</span>
     </div>
-    <div class="context-menu-item" onclick="menuAction('clear')">
-        🗑️ پاک کردن
+    <div class="context-menu-item danger" onclick="menuAction('clear')">
+        پاک کردن
     </div>
 </div>
 
 <script>
-// ============ این تیکه فقط برای نمایشه ============
-// منطق کامل توی تیکه‌های بعدی اضافه میشه
-
+// ============ داده‌های پایه ============
 const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
 const DAY_SHORT = ['ش','ی','د','س','چ','پ','ج'];
 const DAYS_IN_MONTH = [31,31,31,31,31,31,30,30,30,30,30,29];
 
 let currentMonth = 0;
-let isDark = false;
+let isDark = true;
 
-// نمایش تقویم (نمایشی)
+// ============ تبدیل عدد ============
+function toPersianNum(n) {
+    return String(n).split('').map(c => '۰۱۲۳۴۵۶۷۸۹'[c]).join('');
+}
+
+// ============ نمایش تقویم ============
 function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const title = document.getElementById('monthTitle');
@@ -783,9 +820,8 @@ function renderCalendar() {
         html += `<div class="day-name-cell">${d}</div>`;
     });
     
-    // خونه‌های خالی + روزها
     // فروردین ۱۴۰۵ از شنبه شروع میشه
-    const firstDayOffset = (currentMonth === 0) ? 0 : 0; // برای نمایش ساده
+    const firstDayOffset = 0;
     
     for (let i = 0; i < firstDayOffset; i++) {
         html += `<div class="day-cell empty"></div>`;
@@ -793,25 +829,22 @@ function renderCalendar() {
     
     const daysCount = DAYS_IN_MONTH[currentMonth];
     for (let d = 1; d <= daysCount; d++) {
-        const isFriday = ((d + firstDayOffset - 1) % 7) === 6;
-        const isThursday = ((d + firstDayOffset - 1) % 7) === 5;
-        const isToday = (currentMonth === 0 && d === 1); // فرضی
+        const dayOfWeek = (d + firstDayOffset - 1) % 7;
+        const isFriday = dayOfWeek === 6;
+        const isThursday = dayOfWeek === 5;
+        const isToday = (currentMonth === 0 && d === 1);
         
         let cls = 'day-cell';
         if (isFriday) cls += ' friday';
         if (isThursday) cls += ' thursday';
         if (isToday) cls += ' today';
         
-        html += `<div class="${cls}" onclick="openDay(${d})">
+        html += `<div class="${cls}" onclick="openDay(${d}, this)">
             <span class="day-number">${toPersianNum(d)}</span>
         </div>`;
     }
     
     grid.innerHTML = html;
-}
-
-function toPersianNum(n) {
-    return String(n).split('').map(c => '۰۱۲۳۴۵۶۷۸۹'[c]).join('');
 }
 
 function prevMonth() {
@@ -824,17 +857,22 @@ function nextMonth() {
     renderCalendar();
 }
 
-function openDay(d) {
+// ============ باز کردن روز ============
+function openDay(d, el) {
+    // انتخاب روز
+    document.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    
     document.getElementById('modalTitle').textContent = 
-        '📅 ' + MONTHS[currentMonth] + ' ' + toPersianNum(d) + ' - روز';
+        toPersianNum(1405) + '/' + String(currentMonth+1).padStart(2,'0') + '/' + String(d).padStart(2,'0') + ' - ' + MONTHS[currentMonth];
     
     const container = document.getElementById('slotsContainer');
     let html = '';
     
-    // فقط ۰۶:۴۰ تا ۲۳:۴۵ رو نشون بده (ساعت خواب مخفی)
+    // فقط ۰۶:۴۰ تا ۲۳:۴۵ (ساعت خواب مخفی)
     for (let h = 6; h < 24; h++) {
         for (let m = 0; m < 60; m += 15) {
-            if (h === 6 && m < 40) continue; // پرش از ۰۰:۰۰ تا ۰۶:۴۰
+            if (h === 6 && m < 40) continue;
             
             const start = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
             let eh = h, em = m + 15;
@@ -843,9 +881,9 @@ function openDay(d) {
             const end = String(eh).padStart(2,'0') + ':' + String(em).padStart(2,'0');
             
             html += `<div class="slot-row">
-                <div class="slot-time">${start}<br>${end}</div>
-                <input class="slot-input" placeholder="عنوان...">
-                <input class="slot-input" placeholder="توضیحات...">
+                <div class="slot-time">${start} - ${end}</div>
+                <input class="slot-input" placeholder="عنوان">
+                <input class="slot-input" placeholder="توضیحات">
             </div>`;
         }
     }
@@ -864,32 +902,21 @@ function closeModal(e) {
     }
 }
 
-function switchView(v) {
+// ============ تب‌ها ============
+function switchView(v, btn) {
     document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    // منطق توی تیکه بعدی
+    btn.classList.add('active');
+    
+    // فعلاً فقط ماهانه
+    if (v === 'month') {
+        document.querySelector('.calendar-card').style.display = 'block';
+    } else {
+        alert('نمای ' + (v === 'week' ? 'هفتگی' : 'روزانه') + ' توی تیکه بعدی اضافه میشه');
+        document.querySelector('.view-tab.active').classList.remove('active');
+        document.querySelector('.view-tab').classList.add('active');
+    }
 }
 
+// ============ تم ============
 function toggleTheme() {
-    isDark = !isDark;
-    document.body.classList.toggle('dark', isDark);
-}
-
-function openPending() {
-    alert('لیست کارهای عقب‌افتاده - توی تیکه بعدی');
-}
-
-function openSettings() {
-    alert('تنظیمات - توی تیکه بعدی');
-}
-
-function menuAction(a) {
-    document.getElementById('contextMenu').classList.remove('active');
-    // منطق توی تیکه بعدی
-}
-
-// ============ راه‌اندازی ============
-renderCalendar();
-</script>
-</body>
-</html>
+    isDark = !isDark
